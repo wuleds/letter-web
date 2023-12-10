@@ -1,0 +1,45 @@
+import { fileURLToPath, URL } from 'node:url'
+import Components from 'unplugin-vue-components/vite';
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    Components({
+      resolvers: [
+        AntDesignVueResolver({
+          importStyle: false, // css in js
+        }),
+      ],
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  server: {
+    port: 80,
+    host: 'localhost',
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080/',
+        changeOrigin: true,
+        pathRewrite: {
+          '/api': '/'
+        }
+      },
+      '/file': {
+        target: process.env.VUE_APP_SERVER_URL,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/file': '/file'
+        }
+      }
+    }
+  }
+})
