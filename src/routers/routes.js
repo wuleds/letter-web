@@ -1,10 +1,21 @@
 import * as VueRouter from "vue-router"
 
 const routes = [
-    {path:'/login',component: () => import('@/page/login/Login.vue')},
-    {path:'/404',component: () => import('@/page/responseState/404.vue')},
-    {path:'/forget',component: () => import('@/page/login/Forget.vue')},
-    {path:'/signin',component: () => import('@/page/signin/Signin.vue')},
+    {path:'/',redirect:'/user'},
+    {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
+    {
+        path: '/user',
+        name:'user',
+        redirect:'/user/login',
+        component: () => import('@/page/user/User.vue'),
+        children: [
+            {path:'login',name:'login',component: () => import('@/page/user/login/Login.vue')},
+            {path:'forget',name:'forget', component: () => import('@/page/user/login/Forget.vue')},
+            {path:'signin',name:'signin', component: () => import('@/page/user/signin/Signin.vue')},
+            {path:'reset/:url',name:'reset', component: () => import('@/page/user/login/Reset.vue')},
+        ]
+    }
+
     // {
     //     path: '/main',
     //     component: '',
@@ -57,11 +68,12 @@ const routes = [
     //         }
     //     ]
     // }
-]
+];
 
 const router = VueRouter.createRouter({
+    mode: 'history',
     history: VueRouter.createWebHistory(),
     routes
-})
+});
 
 export default router

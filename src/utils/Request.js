@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Qs from 'qs';
 
+const baseUrl = '/api'
 const instance = axios.create({
-    baseURL: '/api', // 设置基本URL
+    baseURL: baseUrl, // 设置基本URL
     timeout: 5000, // 设置请求超时时间
     headers:{
         'Content-Type': 'application/json; charset=utf-8'
@@ -28,8 +29,10 @@ instance.interceptors.request.use(
         // 在发送请求之前做些什么，例如添加token等
         const token = localStorage.getItem('Authorization');
         if (token) {
-            config.headers['Authorization'] = "bearer " + token; // 注入Authorization到请求头
+            config.headers['Authorization'] = "Bearer " + token; // 注入Authorization到请求头
         }
+        // 请求地址处理
+
         console.log('请求拦截器 - 请求发送前:', config);
         //针对不同请求方法设置特定配置
         const type = config.method
@@ -76,9 +79,9 @@ instance.interceptors.response.use(
     (error) => {
         // 对响应错误做些什么
         console.error('响应拦截器 - 响应错误:', error);
-        if (error.response.status === 404) {
-            window.location.href = "/404"; // 跳转到404页面
-        }
+        //if (error.response.status === 404) {
+        //    window.location.href = "/404"; // 跳转到404页面
+       // }
         return Promise.reject(error);
     }
 );

@@ -24,11 +24,6 @@
       <a-input-password  v-model:value="formState.password" />
     </a-form-item>
 
-    <div>
-      <a href="/forget" style="margin-right:10px">忘记密码</a>
-      <a href="/signin" style="margin-left: 10px">注册账户</a>
-    </div>
-
     <a-button type="primary" html-type="reset" @click="reset" style="width: 200px">重置</a-button>
 
     <a-button type="primary" html-type="submit" @click="submit" style="width: 200px;margin-top: 15px" >登录</a-button>

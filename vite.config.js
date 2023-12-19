@@ -24,22 +24,13 @@ export default defineConfig({
   },
   server: {
     port: 80,
-    host: 'localhost',
+    cors: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080/',
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        pathRewrite: {
-          '/api': '/'
-        }
-      },
-      '/file': {
-        target: process.env.VUE_APP_SERVER_URL,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/file': '/file'
-        }
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  }
+  },
 })
