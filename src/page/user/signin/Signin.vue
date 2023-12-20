@@ -8,7 +8,7 @@ import UserNameAndPwd from "@/components/UserNameAndPwd.vue";
       <p>Sign in</p>
       <UserNameAndPwd/>
       <div style="margin-top: 10px">
-        <router-link to="/user/login">登录账号</router-link>
+        <router-link to="/user/login">登录账户</router-link>
       </div>
     </div>
   </div>

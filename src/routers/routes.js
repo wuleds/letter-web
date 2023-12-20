@@ -3,6 +3,7 @@ import * as VueRouter from "vue-router"
 const routes = [
     {path:'/',redirect:'/user'},
     {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
+    {path: '/main',name:'main',component: ()=>import('@/page/main/Main.vue')},
     {
         path: '/user',
         name:'user',
@@ -14,8 +15,7 @@ const routes = [
             {path:'signin',name:'signin', component: () => import('@/page/user/signin/Signin.vue')},
             {path:'reset/:url',name:'reset', component: () => import('@/page/user/login/Reset.vue')},
         ]
-    }
-
+    },
     // {
     //     path: '/main',
     //     component: '',

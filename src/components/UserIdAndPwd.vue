@@ -32,26 +32,18 @@
 </template>
 <script setup>
 import { reactive } from 'vue';
-import Request from "../utils/Request.js";
+import {login} from "@/js/request/Login.js";
+
 const formState = reactive({
   userId: '',
   password: '',
-  remember: true,
 });
 
 function submit(){
-  Request({
-    url:'/user/login',
-    method:'post',
-    data:{
-      userId: formState.userId,
-      password: formState.password
-    }
-  }).then((data)=>{
-    alert(data);
-    const jwt = data.data;
-    localStorage.setItem('Authorization',jwt);
-  })
+  login({
+    userId: formState.userId,
+    userPassword: formState.password
+  });
 }
 
 function reset(){

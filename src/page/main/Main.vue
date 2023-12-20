@@ -3,7 +3,7 @@
 </script>
 
 <template>
-
+MAIN
 </template>
 
 <style scoped>

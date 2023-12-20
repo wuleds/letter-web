@@ -63,7 +63,7 @@
         name="secondPassword"
         :rules="[{ required: false,trigger:'blur',  message: '请检查确认密码(6<=长度<=128)',min:6, max:128}]"
     >
-      <a-input-password  v-model:value="formState.password" />
+      <a-input-password  v-model:value="formState.secondPassword" />
     </a-form-item>
 
     <a-button type="primary" html-type="reset" @click="reset" style="width: 200px">重置</a-button>
@@ -85,14 +85,14 @@ const formState = reactive({
   code: ''
 });
 function getCode(){
-  getAuthCode(formState);
-}
-
-function submit(){
-  signin({
+  getAuthCode({
     method: formState.method,
     contact: formState.contact
   });
+}
+
+function submit(){
+  signin(formState);
 }
 const handleMenuClick = e => {
   formState.method = e.key

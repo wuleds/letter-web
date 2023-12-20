@@ -1,5 +1,11 @@
 <script setup>
 import UserIdAndPwd from "@/components/UserIdAndPwd.vue";
+import {onBeforeMount} from "vue";
+import {autoLogin} from "@/js/request/Login.js";
+
+onBeforeMount(()=>{
+    autoLogin();
+})
 </script>
 
 <template>
