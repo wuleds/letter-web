@@ -14,8 +14,6 @@ const instance = axios.create({
 instance.defaults.withCredentials = true
 // 针对不同的请求方法设置特定的配置
 instance.defaults.headers.common['Content-Type'] = 'application/json; charset=utf-8';
-// 设置POST请求的默认配置
-instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8';
 // 设置GET请求的默认配置
 instance.defaults.params = {};
 instance.defaults.paramsSerializer = (params) => {
@@ -79,10 +77,9 @@ instance.interceptors.response.use(
     (error) => {
         // 对响应错误做些什么
         console.error('响应拦截器 - 响应错误:', error);
-        //if (error.response.status === 404) {
-        //    window.location.href = "/404"; // 跳转到404页面
-       // }
-        return Promise.reject(error);
+        if (error.response.status === 404) {
+            window.location.href = "/404"; // 跳转到404页面
+        }
     }
 );
 
