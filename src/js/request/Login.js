@@ -19,7 +19,7 @@ export const login = (data)=>{
             openNotification('提示','登录成功')
             const jwt = res.data.data;
             localStorage.setItem('jwt',jwt);
-            //window.location.href = '/main';
+            window.location.href = '/main';
         })
     }
 }

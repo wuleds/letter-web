@@ -1,5 +1,5 @@
 <script setup>
-import ForgetUrl from "/src/components/ForgetUrl.vue";
+import ForgetUrl from "/src/components/user/ForgetUrl.vue";
 </script>
 
 <template>

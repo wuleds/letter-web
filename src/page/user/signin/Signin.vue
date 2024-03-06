@@ -1,5 +1,5 @@
 <script setup>
-import UserNameAndPwd from "@/components/UserNameAndPwd.vue";
+import UserNameAndPwd from "@/components/user/UserNameAndPwd.vue";
 </script>
 
 <template>

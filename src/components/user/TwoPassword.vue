@@ -32,7 +32,7 @@
 </template>
 <script setup>
 import { reactive } from 'vue';
-import {reset} from "@/js/request/forget.js"
+import { reset } from "@/js/request/forget.js"
 const props = defineProps(['url'])
 const url = props.url;
 const formState = reactive({

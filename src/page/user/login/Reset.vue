@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute} from "vue-router";
-import TwoPassword from "@/components/TwoPassword.vue";
+import TwoPassword from "@/components/user/TwoPassword.vue";
 const route = useRoute();
 const url = route.params.url;
 </script>

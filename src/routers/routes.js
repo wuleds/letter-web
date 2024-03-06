@@ -1,7 +1,7 @@
 import * as VueRouter from "vue-router"
 
 const routes = [
-    {path:'/',redirect:'/user'},
+    {path:'/',redirect:'/main'},
     {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
     {path: '/main',name:'main',component: ()=>import('@/page/main/Main.vue')},
     {
@@ -16,58 +16,7 @@ const routes = [
             {path:'reset/:url',name:'reset', component: () => import('@/page/user/login/Reset.vue')},
         ]
     },
-    // {
-    //     path: '/main',
-    //     component: '',
-    //     children: [
-    //         {
-    //             path: '/chat',
-    //             component: () => import('@/page/main/chat.vue'),
-    //             meta: {
-    //                 title: '消息'
-    //             },
-    //             children: [
-    //                 {
-    //                     path: '/list',
-    //                     component: () => import('@/page/main/chatList.vue'),
-    //                     meta: {
-    //                         title: '列表'
-    //                     },
-    //                     children: [
-    //                         {
-    //                             path: '/room',
-    //                             component: () => import('@/page/main/chatRoom.vue'),
-    //                             meta: {
-    //                                 title: '聊天室'
-    //                             }
-    //                         }
-    //                     ]
-    //                 }
-    //             ]
-    //         },
-    //         {
-    //             path: '/friend',
-    //             component: () => import('@/page/main/friend.vue'),
-    //             meta: {
-    //                 title: '好友'
-    //             }
-    //         },
-    //         {
-    //             path: '/group',
-    //             component: () => import('@/page/main/group.vue'),
-    //             meta: {
-    //                 title: '群组'
-    //             }
-    //         },
-    //         {
-    //             path: '/subscription',
-    //             component: () => import('@/page/main/subscription.vue'),
-    //             meta: {
-    //                 title: '频道'
-    //             }
-    //         }
-    //     ]
-    // }
+
 ];
 
 const router = VueRouter.createRouter({
