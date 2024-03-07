@@ -1,5 +1,5 @@
 <template>
-  <div class="left-sidebar">
+  <div class="chatList-container">
     <a-input-search class="search" v-model:value="searchValue" placeholder="朋友、群组或频道" enter-button="搜索" size="large" @search="onSearch"/>
 
     <ul>
@@ -55,43 +55,47 @@ const cardStyle = {
 </script>
 
 <style>
-.left-sidebar {
+.chatList-container {
   width: 25%;
   background-color: #ffffff;
-  border-right: 1px solid #cccccc;
-  padding-left: 5px;
+  border: 1px solid #cccccc;
+  margin-left: 5px;
+  padding-left: 2px;
+  border-radius: 5px;
   overflow: auto;
 }
 
 .search{
   width: 90%;
-  height: 3%;
+  height: 5%;
   margin-left: 5%;
+  margin-top: 1%;
   font-family: "JetBrains Mono", monospace;
   color: #000000;
 }
 
 /* 滚动条整体 */
-.left-sidebar::-webkit-scrollbar {
+.chatList-container::-webkit-scrollbar {
   height: 5px;
   width: 2px;
 }
 
-.left-sidebar ul {
+.chatList-container ul {
+  margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
 }
 
-.left-sidebar ul li {
+.chatList-container ul li {
   width: 100%;
-  height: 10vh;
-  padding: 0;
+  height: 10%;
+  padding-top: 1%;
   margin: 0;
   cursor: pointer;
 }
 
-.left-sidebar ul li img {
+.chatList-container ul li img {
   width: 40px;
   height: 40px;
 }

@@ -1,5 +1,10 @@
 <template>
-  <div class="container">
+  <div class="contact-container">
+
+    <div class="contact" v-show="contact_status">
+      <Contact :status="contact_status" @close="showContact"></Contact>
+    </div>
+
 
     <div class="left">
     <div class="warp">
@@ -18,13 +23,13 @@
 
         <div class="menu">
 
-          <div class="menu-item">
+          <div class="menu-item" @click="showContact">
             <div class="menu-item-icon">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-tianxuangouren"></use>
               </svg>
             </div>
-            <div class="text">好友</div>
+            <div class="text">联系人</div>
           </div>
 
           <div class="menu-item">
@@ -69,8 +74,9 @@
       </div>
     </div>
     </div>
-        <ChatList :chatList="chatList" @selectUser="selectUser" />
-        <MessageArea :selectedUser="selectedUser" />
+
+    <ChatList :chatList="chatList" @selectUser="selectUser" />
+    <MessageArea :selectedUser="selectedUser" />
 
   </div>
 </template>
@@ -79,6 +85,8 @@
 import ChatList from '/src/components/main/ChatList.vue';
 import MessageArea from '/src/components/main/MessageArea.vue';
 import {openNotification} from "@/js/Notify/Notify.js";
+import Contact from "@/components/main/Contact.vue";
+import {ref} from "vue";
 import("/src/js/icon/iconfont.js")
 
 const chatList = [
@@ -134,9 +142,22 @@ let selectedUser =  [
 const selectUser = (user) =>{
       openNotification('success', '选择了用户' + user.name);
 };
+
+let contact_status = ref(false);
+const showContact = ()=>{
+  contact_status.value = !contact_status.value;
+  console.log(contact_status);
+}
 </script>
 
 <style scoped>
+.contact{
+  height: 90%;
+  width: 30%;
+  left: 35%;
+  position: absolute;
+}
+
 .icon {
   width: 1em;
   height: 1em;
@@ -145,7 +166,7 @@ const selectUser = (user) =>{
   overflow: hidden;
 }
 
-.container {
+.contact-container {
   display: flex;
   width: 100%;
   height: 97vh;
@@ -170,7 +191,7 @@ const selectUser = (user) =>{
   width:8vh;
   height:100%;
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 5px;
   border: 1px solid #cccccc;
   overflow: hidden;
   transition: 0.5s;

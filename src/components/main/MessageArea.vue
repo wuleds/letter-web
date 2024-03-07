@@ -1,8 +1,5 @@
 <template>
-  <div class="chat-area">
-    <div class="chat-header">
-      {{ user.name }}
-    </div>
+  <div class="messageArea-container">
 
     <div class="chat-input">
       <input type="text" v-model="message" />
@@ -20,47 +17,19 @@ const message = ref('');
 </script>
 
 <style>
-.chat-area {
-  width: 66.66%;
-  background-color: #fff;
-}
-
-.chat-header {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.chat-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.chat-messages {
-  padding: 10px;
-  overflow-y: auto;
-}
-
-.chat-message {
-  padding: 10px;
+.messageArea-container {
+  width: 70%;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  margin-left: 5px;
+  padding-left: 2px;
   border-radius: 5px;
-  margin-bottom: 10px;
-  background-color: #f7f7f7;
-}
-
-.chat-message.from-me {
-  background-color: #ddd;
-  float: right;
-}
-
-.chat-input {
-  padding: 10px;
-  border-top: 1px solid #ddd;
+  overflow: auto;
 }
 
 .chat-input input {
-  width: 100%;
+  width: 50%;
+  height: 50%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
