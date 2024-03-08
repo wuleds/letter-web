@@ -4,29 +4,34 @@
 
     <ul>
       <li v-for="user in chatList" :key="user.id" @click="selectUser(user)">
+            <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }">
 
-        <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }">
+              <div class="card">
 
-          <a-flex justify="space-between">
+                  <div class="contact-photo">
+                        <a-badge :count="5" :overflow-count="999">
+                          <a-avatar size="large">
+                            <template #icon><img src="https://avatars.githubusercontent.com/u/76564306?s=40&v=4" alt="头像"></template>
+                          </a-avatar>
+                        </a-badge>
+                  </div>
 
-            <a-space direction="vertical" :size="36">
-              <a-space wrap :size="20" style="padding-top: 30%;padding-left: 30%">
-                <a-badge :count="5" :overflow-count="999">
-                  <a-avatar size="large">
-                    <template #icon><img src="https://avatars.githubusercontent.com/u/76564306?s=40&v=4" alt="头像"></template>
-                  </a-avatar>
-                </a-badge>
-              </a-space>
-            </a-space>
+                  <div class="contact-data">
 
-            <a-flex vertical justify="space-between" :style="{ paddingLeft: '30px'}" style="background-color: #2c3e50">
-              <h3><a href="#">名字</a></h3>
-              最新消息
-            </a-flex>
+                    <div class="contact-name">
+                      <a>Name</a>
+                      <div class="delete-btn">
+                        <svg class="chat-icon" aria-hidden="true">
+                          <use xlink:href="#icon-chacha"></use>
+                        </svg>
+                      </div>
+                    </div>
 
-          </a-flex>
+                    <div class="latest-mes">This is a Message! This is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a Message</div>
+                  </div>
 
-        </a-card>
+              </div>
+            </a-card>
 
       </li>
     </ul>
@@ -62,7 +67,8 @@ const cardStyle = {
   margin-left: 5px;
   padding-left: 2px;
   border-radius: 5px;
-  overflow: auto;
+  overflow-y: auto;
+  font-family: "Sarasa Fixed SC", serif;
 }
 
 .search{
@@ -74,7 +80,6 @@ const cardStyle = {
   color: #000000;
 }
 
-/* 滚动条整体 */
 .chatList-container::-webkit-scrollbar {
   height: 5px;
   width: 2px;
@@ -98,5 +103,57 @@ const cardStyle = {
 .chatList-container ul li img {
   width: 40px;
   height: 40px;
+}
+
+li{
+  list-style-type: none;
+}
+
+.card {
+  display: flex;
+  padding: 2px;
+}
+
+.contact-photo {
+  height: 100%;
+  width: 15%;
+  padding: 15px;
+  margin: 0;
+}
+
+.contact-data {
+  margin:0;
+  padding: 0;
+  overflow: auto;
+}
+
+.contact-name {
+  display: flex;
+}
+
+.latest-mes {
+  width: 90%;
+  height: 28%;
+  overflow: hidden;
+}
+
+.delete-btn{
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+}
+
+.delete-btn:hover{
+  background-color: #eeeeee;
+}
+
+.chat-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }
 </style>

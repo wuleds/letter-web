@@ -25,7 +25,7 @@
 
           <div class="menu-item" @click="showContact">
             <div class="menu-item-icon">
-              <svg class="icon" aria-hidden="true">
+              <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-tianxuangouren"></use>
               </svg>
             </div>
@@ -34,7 +34,7 @@
 
           <div class="menu-item">
             <div class="menu-item-icon">
-              <svg class="icon" aria-hidden="true">
+              <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-qunzu"></use>
               </svg>
             </div>
@@ -43,7 +43,7 @@
 
           <div class="menu-item">
             <div class="menu-item-icon">
-              <svg class="icon" aria-hidden="true">
+              <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-dingyue"></use>
               </svg>
             </div>
@@ -52,7 +52,7 @@
 
           <div class="menu-item">
             <div class="menu-item-icon">
-              <svg class="icon" aria-hidden="true">
+              <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-plume"></use>
               </svg>
             </div>
@@ -61,7 +61,7 @@
 
           <div class="menu-item logout">
             <div class="menu-item-icon">
-              <svg class="icon" aria-hidden="true">
+              <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-tuichu"></use>
               </svg>
             </div>
@@ -158,7 +158,7 @@ const showContact = ()=>{
   position: absolute;
 }
 
-.icon {
+.main-icon {
   width: 1em;
   height: 1em;
   vertical-align: -0.15em;
