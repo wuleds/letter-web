@@ -18,24 +18,18 @@ export const login = (data)=>{
             }
             openNotification('提示','登录成功')
             const jwt = res.data.data;
-            localStorage.setItem('jwt',jwt);
+            localStorage.setItem('Authorization',jwt);
             window.location.href = '/main';
         })
     }
 }
 
 export const autoLogin= ()=>{
-    const jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('Authorization');
     if(jwt !== null){
         Request({
             url: '/user/autoLogin',
             method: 'post',
-            data: {
-                'jwt': jwt
-            },
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-            }
         }).then((res)=>{
             if(res.data.code === '200'){
                 window.location.href = '/main';

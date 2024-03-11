@@ -29,8 +29,6 @@ instance.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = "Bearer " + token; // 注入Authorization到请求头
         }
-        // 请求地址处理
-
         console.log('请求拦截器 - 请求发送前:', config);
         //针对不同请求方法设置特定配置
         const type = config.method

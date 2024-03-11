@@ -59,7 +59,7 @@
             <div class="text">动态</div>
           </div>
 
-          <div class="menu-item logout">
+          <div class="menu-item logout" @click="logout">
             <div class="menu-item-icon">
               <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-tuichu"></use>
@@ -85,8 +85,9 @@
 import ChatList from '/src/components/main/ChatList.vue';
 import MessageArea from '/src/components/main/MessageArea.vue';
 import {openNotification} from "@/js/Notify/Notify.js";
-import Contact from "@/components/main/Contact.vue";
+import Contact from "/src/components/main/Contact.vue";
 import {ref} from "vue";
+import logout from "/src/js/main/logout/logout.js";
 import("/src/js/icon/iconfont.js")
 
 const chatList = [

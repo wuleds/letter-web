@@ -6,6 +6,10 @@ const status = props.status;
 const close = () => {
   emits('close');
 }
+
+const searchContact = ()=>{
+
+}
 </script>
 
 <template>
@@ -23,14 +27,15 @@ const close = () => {
 
 <style scoped>
 .contact-container{
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   justify-content: center;
   align-items: center;
   text-align: center;
   z-index: 100;
-  border: 1px solid #000000;
-  background-color: #cccccc;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  background-color: #ffffff;
   font-family: "Sarasa Fixed SC", serif;
 }
 

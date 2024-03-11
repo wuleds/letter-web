@@ -27,7 +27,7 @@ export const signin = (data)=>{
 }
 
 export const getAuthCode = (data)=>{
-    if(data.contact === ''){
+    if(data.s === ''){
         openNotification('提示', '请输入联系方式')
     }else {
         Request({

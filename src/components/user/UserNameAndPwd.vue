@@ -18,11 +18,11 @@
 
     <a-form-item
         label="联系方式"
-        name="contact"
+        name="s"
         :rules="[{ required: false,trigger:'blur', message: '请检查联系方式'}]"
     >
       <div>
-        <a-input v-model:value="formState.contact" style="width: 180px;float: left"/>
+        <a-input v-model:value="formState.s" style="width: 180px;float: left"/>
         <a-dropdown>
           <template #overlay>
             <a-menu @click="handleMenuClick">
@@ -81,13 +81,13 @@ const formState = reactive({
   password: '',
   secondPassword: '',
   method: 'email',
-  contact: '',
+  s: '',
   code: ''
 });
 function getCode(){
   getAuthCode({
     method: formState.method,
-    contact: formState.contact
+    s: formState.s
   });
 }
 
