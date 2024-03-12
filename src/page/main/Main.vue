@@ -1,5 +1,5 @@
 <template>
-  <div class="contact-container">
+  <div class="main-container">
 
     <div class="contact" v-show="contact_status">
       <Contact :status="contact_status" @close="showContact"></Contact>
@@ -75,8 +75,9 @@
     </div>
     </div>
 
-    <ChatList :chatList="chatList" @selectUser="selectUser" />
-    <MessageArea :selectedUser="selectedUser" />
+    <router-view></router-view>
+<!--    <ChatList :chatList="chatList" @selectUser="selectUser" />-->
+<!--    <MessageArea :selectedUser="selectedUser" />-->
 
   </div>
 </template>
@@ -154,8 +155,9 @@ const showContact = ()=>{
 <style scoped>
 .contact{
   height: 90%;
-  width: 30%;
-  left: 35%;
+  width: 50%;
+  left: 25%;
+  z-index: 1;
   position: absolute;
 }
 
@@ -167,7 +169,7 @@ const showContact = ()=>{
   overflow: hidden;
 }
 
-.contact-container {
+.main-container {
   display: flex;
   width: 100%;
   height: 97vh;

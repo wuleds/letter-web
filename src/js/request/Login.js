@@ -1,5 +1,5 @@
-import {openNotification} from "@/js/Notify/Notify.js"
-import Request from "@/utils/Request.js";
+import {openNotification} from "/src/js/Notify/Notify.js"
+import Request from "/src/utils/Request.js";
 
 export const login = (data)=>{
     if(data.userId === ''){

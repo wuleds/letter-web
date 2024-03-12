@@ -1,4 +1,5 @@
 <script setup>
+import {openNotification} from "/src/js/Notify/Notify.js"
 const props = defineProps(['status']);
 const emits = defineEmits(['close']);
 const status = props.status;
@@ -13,7 +14,7 @@ const searchContact = ()=>{
 </script>
 
 <template>
-    <div class="contact-container">
+    <div class="main-container">
       <div class="title"><p>联系人</p></div>
       <div class="main">
         <div class="content">
@@ -26,13 +27,12 @@ const searchContact = ()=>{
 </template>
 
 <style scoped>
-.contact-container{
+.main-container{
   height: 100%;
   width: 100%;
   justify-content: center;
   align-items: center;
   text-align: center;
-  z-index: 100;
   border: 1px solid #cccccc;
   border-radius: 5px;
   background-color: #ffffff;

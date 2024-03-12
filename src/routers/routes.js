@@ -3,7 +3,19 @@ import * as VueRouter from "vue-router"
 const routes = [
     {path:'/',redirect:'/main'},
     {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
-    {path: '/main',name:'main',component: ()=>import('@/page/main/Main.vue')},
+    {
+        path: '/main',
+        name:'main',
+        redirect: '/main/chat-window',
+        component: ()=>import('@/page/main/Main.vue'),
+        children:[
+            {
+                path: 'chat-window',
+                name: 'chat-window',
+                component:() => import('@/page/main/ChatWindow.vue'),
+            }
+        ]
+    },
     {
         path: '/user',
         name:'user',
