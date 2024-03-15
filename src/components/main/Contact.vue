@@ -1,33 +1,61 @@
 <script setup>
-import {openNotification} from "/src/js/Notify/Notify.js"
-const props = defineProps(['status']);
+import MyContacts from "@/components/main/contact/MyContacts.vue";
+import ContactRequest from "@/components/main/contact/ContactRequest.vue";
+import AddContact from "@/components/main/contact/AddContact.vue";
+import {reactive, ref} from "vue";
+import {getContactList,getRequestList} from "@/js/contact/Contact.js";
 const emits = defineEmits(['close']);
-const status = props.status;
 
+const data = reactive(["联系人","请求"]);
+const value = ref(data[0]);
+
+const requestList = getContactList();
+const contactList = getRequestList();
 const close = () => {
   emits('close');
 }
 
-const searchContact = ()=>{
-
+const addContact_status = ref(false);
+const showAddContact = ()=>{
+  addContact_status.value = !addContact_status.value;
 }
 </script>
 
 <template>
-    <div class="main-container">
+    <div class="contact-container">
+
+      <div class="addContact" v-show="addContact_status">
+        <AddContact @close="showAddContact"></AddContact>
+      </div>
+
       <div class="title"><p>联系人</p></div>
       <div class="main">
         <div class="content">
-          <input type="text" >
-          <button @click="close">搜索</button>
-          <button @click="close">返回</button>
+<!--          联系人列表，添加请求列表，添加联系人按钮，关闭按钮-->
+          <a-segmented style="width: 50%;margin-left: 25%" v-model:value="value" block :options="data" />
+
+          <MyContacts v-if="value === data[0]" @myContact="contactList"></MyContacts>
+          <ContactRequest v-if="value === data[1]" @myRequest="requestList"></ContactRequest>
+
+          <div class="contact-btn-div">
+            <span @click="showAddContact" class="btn">添加联系人</span>
+            <span @click="close" class="btn" style="">关闭</span>
+          </div>
+
         </div>
       </div>
     </div>
 </template>
 
 <style scoped>
-.main-container{
+.addContact{
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  position: absolute;
+}
+
+.contact-container{
   height: 100%;
   width: 100%;
   justify-content: center;
@@ -46,13 +74,25 @@ const searchContact = ()=>{
 
 
 .title{
-  font-size: 16px;
-  position: absolute;
-  top: 0;
+  font-size: 20px;
 }
 
 .content{
   height: 100%;
   width: 100%;
+}
+
+.btn{
+  color: rgb(22,138,205);
+  cursor: pointer;
+}
+.btn:hover{
+  background-color: rgb(227,241,250);
+}
+
+.contact-btn-div{
+  position: absolute;
+  bottom: 1%;
+  margin-left: 30%;
 }
 </style>

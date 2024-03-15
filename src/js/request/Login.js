@@ -1,5 +1,6 @@
 import {openNotification} from "/src/js/Notify/Notify.js"
 import Request from "/src/utils/Request.js";
+import {useMeStore} from "@/js/store/Me.js";
 
 export const login = (data)=>{
     if(data.userId === ''){
@@ -19,6 +20,9 @@ export const login = (data)=>{
             openNotification('提示','登录成功')
             const jwt = res.data.data;
             localStorage.setItem('Authorization',jwt);
+            getUserInfo().then(res => {
+                useMeStore().setUserInfo(res);
+            });
             window.location.href = '/main';
         })
     }
@@ -32,8 +36,34 @@ export const autoLogin= ()=>{
             method: 'post',
         }).then((res)=>{
             if(res.data.code === '200'){
+                getUserInfo().then(res => {
+                    useMeStore().setUserInfo(res);
+                });
                 window.location.href = '/main';
             }
         })
     }
+}
+
+const getUserInfo = async ()=>{
+    return await Request({
+        url: '/user/info',
+        method: 'post',
+    }).then((res)=>{
+        if(res.data.code === '200'){
+            return JSON.parse(res.data.data);
+        }
+    })
+    //存储个人信息
+    // UserInfo:{
+    //     String userId;   //用户id
+    //     String userName; //用户名
+    //     String userPhoto; //用户头像
+    //     String userTalk;  //用户签名
+    //     String userSex;  //用户性别,私密
+    //     String userEmail; //用户邮箱，私密
+    //     String userPhone; //用户电话，私密
+    //     String userAddress; //用户地址，私密
+    //     Date userBirthday; //用户生日，私密
+    // }
 }

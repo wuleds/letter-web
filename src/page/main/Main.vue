@@ -2,7 +2,7 @@
   <div class="main-container">
 
     <div class="contact" v-show="contact_status">
-      <Contact :status="contact_status" @close="showContact"></Contact>
+      <Contact @close="showContact"></Contact>
     </div>
 
 
@@ -15,7 +15,7 @@
             <img src="https://avatars.githubusercontent.com/u/76564306?s=40&v=4" alt="">
           </div>
           <div class="photo-text">
-            <p>早上好！</p>
+            <p>{{myId}}</p>
           </div>
         </div>
 
@@ -83,80 +83,26 @@
 </template>
 
 <script setup>
-import ChatList from '/src/components/main/ChatList.vue';
-import MessageArea from '/src/components/main/MessageArea.vue';
 import {openNotification} from "@/js/Notify/Notify.js";
 import Contact from "/src/components/main/Contact.vue";
 import {ref} from "vue";
 import logout from "/src/js/main/logout/logout.js";
+import {useMeStore} from "@/js/store/Me.js";
 import("/src/js/icon/iconfont.js")
-
-const chatList = [
-        {
-          id: 1,
-          name: '张三',
-        },
-        {
-          id: 2,
-          name: '李四',
-        },
-        {
-          id: 3,
-          name: '王五',
-        },
-  {
-    id: 4,
-    name: '张三',
-  },
-  {
-    id: 5,
-    name: '李四',
-  },
-  {
-    id: 6,
-    name: '王五',
-  },
-  {
-    id: 7,
-    name: '张三',
-  },
-  {
-    id: 8,
-    name: '李四',
-  },
-  {
-    id: 9,
-    name: '王五',
-  }
-  ];
-let selectedUser =  [
-  {
-    name: '张三'
-  },
-  {
-    name: '李四'
-  },
-  {
-    name: '王五'
-
-  }
-]
-const selectUser = (user) =>{
-      openNotification('success', '选择了用户' + user.name);
-};
 
 let contact_status = ref(false);
 const showContact = ()=>{
   contact_status.value = !contact_status.value;
-  console.log(contact_status);
 }
+
+const myId = ref(useMeStore().userInfo.userId);
 </script>
 
 <style scoped>
 .contact{
   height: 90%;
-  width: 50%;
-  left: 25%;
+  width: 30%;
+  left: 35%;
   z-index: 1;
   position: absolute;
 }

@@ -10,6 +10,7 @@ const logout = () => {
             console.log("退出登录");
         }
         localStorage.removeItem('Authorization');
+        window.location.href = "/user"
     })
 
 }

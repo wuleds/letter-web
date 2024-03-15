@@ -1,6 +1,10 @@
 <template>
   <div class="chatList-container">
-    <a-input-search class="search" v-model:value="searchValue" placeholder="朋友、群组或频道" enter-button="搜索" size="large" @search="onSearch"/>
+    <div style="display: flex">
+      <a-input v-model:value="searchValue" size="large" placeholder="搜索联系人，群组或频道" />
+      <button>搜索</button>
+    </div>
+
 
     <ul>
       <li v-for="user in chatList" :key="user.id" @click="selectUser(user)">
@@ -77,7 +81,6 @@ const cardStyle = {
   margin-left: 5%;
   margin-top: 1%;
   font-family: "JetBrains Mono", monospace;
-  color: #000000;
 }
 
 .chatList-container::-webkit-scrollbar {

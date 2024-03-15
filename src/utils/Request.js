@@ -75,9 +75,9 @@ instance.interceptors.response.use(
     (error) => {
         // 对响应错误做些什么
         console.error('响应拦截器 - 响应错误:', error);
-        if (error.response.status === 404) {
+        /*if (error.response.status === 404) {
             window.location.href = "/404"; // 跳转到404页面
-        }
+        }*/
     }
 );
 

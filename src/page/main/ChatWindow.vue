@@ -3,7 +3,7 @@
 import ChatList from "@/components/main/ChatList.vue";
 import MessageArea from "@/components/main/MessageArea.vue";
 
-const getChatList =
+//获取对话列表
 </script>
 
 <template>

@@ -3,10 +3,12 @@ import Antd from 'ant-design-vue';
 
 import App from './App.vue'
 import router from './routers/routes.js'
+import {createPinia} from "pinia";
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(Antd)
-app.use(router)
+app.use(Antd);
+app.use(router);
+app.use(createPinia());
 
-app.mount('#app')
+app.mount('#app');
