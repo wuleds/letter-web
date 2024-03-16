@@ -10,13 +10,12 @@ import {reactive} from "vue";
  * String contactName; //用户名
  * String contactPhoto;//用户头像
  * */
-export const getContactList = () => {
+export const getContactList =  () => {
     return Request({
         url: '/contact/list',
         method: 'post'
     }).then(res => {
         if(res.data.code === '200'){
-            console.log(res.data.data);
             return res.data.data;
         }else if(res.data.code === '400'){
             openNotification('提示', res.data.msg)
@@ -34,19 +33,23 @@ export const getContactList = () => {
  * String toUserId;     //请求接收者
  * String info;         //请求信息
  */
-export const getRequestList = () => {
-    return Request({
+export async function getRequestList() {
+    const data = await Request({
         url: '/contact/request/list',
         method: 'post'
     }).then(res => {
         if (res.data.code === '200') {
-            console.log(res.data.data);
-            return res.data.data;
+            return JSON.parse(res.data.data);
         } else if (res.data.code === '400') {
             openNotification('提示', res.data.msg)
             return null;
         }
+        return null;
     });
+    console.log("***************")
+    console.log(data)
+    console.log("***************")
+    return data;
 }
 
 export const sendContactRequest = (contactRequest) => {

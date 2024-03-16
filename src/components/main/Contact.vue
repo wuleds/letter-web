@@ -3,14 +3,11 @@ import MyContacts from "@/components/main/contact/MyContacts.vue";
 import ContactRequest from "@/components/main/contact/ContactRequest.vue";
 import AddContact from "@/components/main/contact/AddContact.vue";
 import {reactive, ref} from "vue";
-import {getContactList,getRequestList} from "@/js/contact/Contact.js";
 const emits = defineEmits(['close']);
 
 const data = reactive(["联系人","请求"]);
 const value = ref(data[0]);
 
-const requestList = getContactList();
-const contactList = getRequestList();
 const close = () => {
   emits('close');
 }
@@ -34,8 +31,8 @@ const showAddContact = ()=>{
 <!--          联系人列表，添加请求列表，添加联系人按钮，关闭按钮-->
           <a-segmented style="width: 50%;margin-left: 25%" v-model:value="value" block :options="data" />
 
-          <MyContacts v-if="value === data[0]" @myContact="contactList"></MyContacts>
-          <ContactRequest v-if="value === data[1]" @myRequest="requestList"></ContactRequest>
+          <MyContacts v-if="value === data[0]"></MyContacts>
+          <ContactRequest v-if="value === data[1]"></ContactRequest>
 
           <div class="contact-btn-div">
             <span @click="showAddContact" class="btn">添加联系人</span>

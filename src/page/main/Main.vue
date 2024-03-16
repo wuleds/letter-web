@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
 
-    <div class="contact" v-show="contact_status">
+    <div class="contact" v-if="contact_status">
       <Contact @close="showContact"></Contact>
     </div>
 
@@ -74,11 +74,7 @@
       </div>
     </div>
     </div>
-
     <router-view></router-view>
-<!--    <ChatList :chatList="chatList" @selectUser="selectUser" />-->
-<!--    <MessageArea :selectedUser="selectedUser" />-->
-
   </div>
 </template>
 

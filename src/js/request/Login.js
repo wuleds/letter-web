@@ -12,7 +12,7 @@ export const login = (data)=>{
             url: '/user/login',
             method: 'post',
             data: data
-        }).then((res)=>{
+        }).then(async (res)=>{
             if(res.data.code !== '200'){
                 openNotification('提示', res.data.msg);
                 return
@@ -20,9 +20,7 @@ export const login = (data)=>{
             openNotification('提示','登录成功')
             const jwt = res.data.data;
             localStorage.setItem('Authorization',jwt);
-            getUserInfo().then(res => {
-                useMeStore().setUserInfo(res);
-            });
+            await getUserInfo();
             window.location.href = '/main';
         })
     }
@@ -34,24 +32,23 @@ export const autoLogin= ()=>{
         Request({
             url: '/user/autoLogin',
             method: 'post',
-        }).then((res)=>{
+        }).then( async (res)=>{
             if(res.data.code === '200'){
-                getUserInfo().then(res => {
-                    useMeStore().setUserInfo(res);
-                });
+                await getUserInfo()
                 window.location.href = '/main';
             }
         })
     }
 }
 
-const getUserInfo = async ()=>{
-    return await Request({
+const getUserInfo =  async ()=>{
+     await Request({
         url: '/user/info',
         method: 'post',
     }).then((res)=>{
         if(res.data.code === '200'){
-            return JSON.parse(res.data.data);
+            console.log(res.data.data)
+            useMeStore().setUserInfo(JSON.parse(res.data.data));
         }
     })
     //存储个人信息

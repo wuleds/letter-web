@@ -2,7 +2,8 @@
 
 import ChatList from "@/components/main/ChatList.vue";
 import MessageArea from "@/components/main/MessageArea.vue";
-
+import {ref} from "vue";
+const getChatList = ref([]);
 //获取对话列表
 </script>
 

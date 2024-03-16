@@ -1,12 +1,11 @@
 //全局的聊天列表
 
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import {defineStore} from "pinia";
 import Request from "@/utils/Request.js";
-import {openNotification} from "@/js/Notify/Notify.js";
 
-const useChatListStore = defineStore('chatListData',()=>{
-    const chatListData = ref([])
+export const useChatListStore = defineStore('chatListData',()=>{
+    const chatListData = ref(JSON.parse(localStorage.getItem('chatListData')) || []);
 
     /**
      * 通过此函数新建对话，获取chatId，可能需要获取历史对话记录。*/

@@ -31,7 +31,7 @@
                       </div>
                     </div>
 
-                    <div class="latest-mes">This is a Message! This is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a Message</div>
+                    <div class="latest-msg">This is a Message! This is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a Message</div>
                   </div>
 
               </div>
@@ -134,7 +134,7 @@ li{
   display: flex;
 }
 
-.latest-mes {
+.latest-msg {
   width: 90%;
   height: 28%;
   overflow: hidden;

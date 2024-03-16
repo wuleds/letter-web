@@ -68,11 +68,6 @@ const cardStyle = {
 
           <a-textarea style="width: 80%;height: 50%;resize: none;font-family: 'Sarasa Fixed SC', serif" v-model:value="contactRequest.info" placeholder="输入申请备注" :rows="4" />
           <button class="add-button" @click="sendContactRequest(contactRequest)">申请添加联系人</button>
-          <pre>
-              from:{{contactRequest.fromUserId}}
-              to  :{{contactRequest.toUserId}}
-              info:  {{contactRequest.info}}
-            </pre>
         </div>
 
         <div v-if="contact.userId === ''" style="margin-top: 10%">

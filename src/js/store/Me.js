@@ -16,20 +16,15 @@ import {ref} from "vue";
  *     */
 export const useMeStore = defineStore('me',()=>{
     const userInfo = ref({
-        userId: '',
-        userName: '',
-        userPhoto: '',
-        userTalk: '',
-        userSex: '',
+        userId: localStorage.getItem('userId') || '',
+        userName: localStorage.getItem('userName') || '',
+        userPhoto: localStorage.getItem('userPhoto') || '',
+        userTalk: localStorage.getItem('userTalk') || '',
+        userSex: localStorage.getItem('userSex') || '',
     });
 
-    const count = ref(0);
-    function increment() {
-        count.value++;
-        console.log(count.value)
-    }
-
     function setUserInfo(data){
+        console.log(data)
         userInfo.userId = data.userId;
         userInfo.userName = data.userName;
         userInfo.userPhoto = data.userPhoto;
@@ -44,8 +39,6 @@ export const useMeStore = defineStore('me',()=>{
 
     return {
         userInfo,
-        count,
-        increment,
         setUserInfo
     }
 })
