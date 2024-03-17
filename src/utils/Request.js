@@ -29,7 +29,7 @@ instance.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = "Bearer " + token; // 注入Authorization到请求头
         }
-        console.log('请求拦截器 - 请求发送前:', config);
+        //console.log('请求拦截器 - 请求发送前:', config);
         //针对不同请求方法设置特定配置
         const type = config.method
         const arrayFormat = config.headers.arrayFormat || 'indices'
@@ -69,12 +69,12 @@ instance.interceptors.response.use(
             window.location.href = "/login"
         }
         // 对响应数据做些什么
-        console.log('响应拦截器 - 接收到响应:', response);
+        //console.log('响应拦截器 - 接收到响应:', response);
         return response;
     },
     (error) => {
         // 对响应错误做些什么
-        console.error('响应拦截器 - 响应错误:', error);
+        //console.error('响应拦截器 - 响应错误:', error);
         /*if (error.response.status === 404) {
             window.location.href = "/404"; // 跳转到404页面
         }*/

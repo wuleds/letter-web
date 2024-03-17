@@ -10,17 +10,15 @@ import {reactive} from "vue";
  * String contactName; //用户名
  * String contactPhoto;//用户头像
  * */
-export const getContactList =  () => {
-    return Request({
+export async function getContactList(){
+    return await Request({
         url: '/contact/list',
         method: 'post'
     }).then(res => {
         if(res.data.code === '200'){
-            return res.data.data;
-        }else if(res.data.code === '400'){
-            openNotification('提示', res.data.msg)
-            return null;
+            return JSON.parse(res.data.data);
         }
+        return null;
     })
 }
 
@@ -34,22 +32,15 @@ export const getContactList =  () => {
  * String info;         //请求信息
  */
 export async function getRequestList() {
-    const data = await Request({
+    return await Request({
         url: '/contact/request/list',
         method: 'post'
     }).then(res => {
         if (res.data.code === '200') {
             return JSON.parse(res.data.data);
-        } else if (res.data.code === '400') {
-            openNotification('提示', res.data.msg)
-            return null;
         }
         return null;
     });
-    console.log("***************")
-    console.log(data)
-    console.log("***************")
-    return data;
 }
 
 export const sendContactRequest = (contactRequest) => {
@@ -82,6 +73,22 @@ export const searchContact = async (contactId) => {
             openNotification('提示', res.data.msg)
         }
     })
+}
 
+export const handleContactRequest = async (data)=>{
+    //String requestId;  //请求id
+    //int status;        //处理结果,0:未处理,1:同意,2:忽略
+    return await Request({
+        url: '/contact/handle',
+        method: 'post',
+        data: data
+    }).then((res)=>{
+        if(res.data.code === '200'){
+            return true;
+        }else if(res.data.code === '400'){
+            openNotification('错误',res.data.msg);
+        }
 
+        return false;
+    })
 }
