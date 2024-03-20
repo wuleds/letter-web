@@ -24,7 +24,7 @@ const routes = [
         children: [
             {path:'login',name:'login',component: () => import('@/page/user/login/Login.vue')},
             {path:'forget',name:'forget', component: () => import('@/page/user/login/Forget.vue')},
-            {path:'signin',name:'signin', component: () => import('@/page/user/signin/Signin.vue')},
+            {path:'register',name:'register', component: () => import('@/page/user/signin/Signin.vue')},
             {path:'reset/:url',name:'reset', component: () => import('@/page/user/login/Reset.vue')},
         ]
     },

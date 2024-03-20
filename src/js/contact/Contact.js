@@ -92,3 +92,20 @@ export const handleContactRequest = async (data)=>{
         return false;
     })
 }
+
+export const deleteContact = async (contactId) => {
+    return await Request({
+        url: '/contact/delete',
+        method: 'post',
+        data: reactive({
+            userId: contactId
+        })
+    }).then(res => {
+        if(res.data.code === '200'){
+            return true;
+        }else if(res.data.code === '400'){
+            openNotification('错误',res.data.msg);
+        }
+        return false;
+    })
+}

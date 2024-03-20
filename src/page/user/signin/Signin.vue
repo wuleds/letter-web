@@ -5,7 +5,7 @@ import UserNameAndPwd from "@/components/user/UserNameAndPwd.vue";
 <template>
   <div id="signinGG">
     <div id="signin">
-      <p>Sign in</p>
+      <p>Register</p>
       <UserNameAndPwd/>
       <div style="margin-top: 10px">
         <router-link to="/user/login">登录账户</router-link>

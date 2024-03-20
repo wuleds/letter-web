@@ -15,7 +15,7 @@ onBeforeMount(()=>{
         <UserIdAndPwd/>
         <div style="margin-top: 10px">
           <router-link style="margin-right:10px" to="/user/forget">忘记密码</router-link>
-          <router-link style="margin-left: 10px" to="/user/signin">注册账户</router-link>
+          <router-link style="margin-left: 10px" to="/user/register">注册账户</router-link>
         </div>
 
       </div>

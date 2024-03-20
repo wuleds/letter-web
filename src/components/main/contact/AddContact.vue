@@ -71,7 +71,7 @@ const cardStyle = {
         </div>
 
         <div v-if="contact.userId === ''" style="margin-top: 10%">
-          <span >No Contact</span>
+          <span >No Data</span>
         </div>
 
         <div class="add-btn-div">

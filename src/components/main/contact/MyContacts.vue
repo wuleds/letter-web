@@ -6,65 +6,13 @@ import ContactCard from "@/components/main/contact/card/ContactCard.vue";
 //String contactName; //用户名
 //String contactPhoto;   //用户头像
 const contactList = ref();
-/*onMounted(async () => {
+onMounted(async () => {
   contactList.value = await getContactList();
   if(contactList.value){
     console.log("联系人为空")
   }
-});*/
+});
 
-contactList.value = [
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  },
-  {
-    contactId: "123456",
-    contactName: "张三",
-    contactPhoto: "1.jpg"
-  }
-];
 
 </script>
 

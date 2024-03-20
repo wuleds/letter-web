@@ -8,7 +8,7 @@ import ForgetUrl from "/src/components/user/ForgetUrl.vue";
       <p>Forget</p>
       <ForgetUrl/>
       <div style="margin-top: 10px">
-        <router-link style="margin-right:10px" to="/user/signin">注册账户</router-link>
+        <router-link style="margin-right:10px" to="/user/register">注册账户</router-link>
         <router-link style="margin-left: 10px" to="/user/login">登录账户</router-link>
       </div>
 

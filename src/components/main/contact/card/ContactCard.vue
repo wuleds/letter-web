@@ -1,14 +1,23 @@
 <script setup>
-import {reactive, ref} from "vue";
+import { ref} from "vue";
+import {deleteContact} from "@/js/contact/Contact.js";
 const props = defineProps(['contact']);
 const contact = ref(props.contact);
 const show =ref(true);
-
-const del = () => {
-  //展示对话框，确定删除联系人?
-  show.value = false;
-  console.log("删除联系人");
-}
+const modalText = ref('确定删除该联系人吗?');
+const open = ref(false);
+const confirmLoading = ref(false);
+const showModal = () => {
+  open.value = true;
+};
+const handleOk = async () => {
+  confirmLoading.value = true;
+  setTimeout(() => {
+    open.value = false;
+    confirmLoading.value = false;
+  }, 1000);
+  show.value = !await deleteContact(contact.value.contactId);
+};
 </script>
 
 <template>
@@ -29,13 +38,17 @@ const del = () => {
 
       <div class="contact-list-card-user-btn" v-if="show">
 <!--        删除联系人-->
-        <div class="contact-list-card-user-btn-1" @click="del">
+        <div class="contact-list-card-user-btn-1" @click="showModal">
 
           <div class="contact-list-menu-icon">
             <svg class="contact-list-icon" aria-hidden="true">
               <use xlink:href="#icon-lajitong-copy"></use>
             </svg>
           </div>
+
+          <a-modal v-model:open="open" title="确认" :confirm-loading="confirmLoading" @ok="handleOk" ok-text="确定" cancel-text="取消">
+            <p>{{ modalText }}</p>
+          </a-modal>
 
         </div>
 <!--        启动对话-->
