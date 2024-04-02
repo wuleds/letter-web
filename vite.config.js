@@ -27,6 +27,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
+        //target: 'https://wules.space/api',
         target: 'http://localhost:20800',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
