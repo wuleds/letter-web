@@ -18,6 +18,11 @@ const handleOk = async () => {
   }, 1000);
   show.value = !await deleteContact(contact.value.contactId);
 };
+
+const emits = defineEmits(['close']);
+const close = () => {
+  emits('close');
+}
 </script>
 
 <template>
@@ -52,7 +57,7 @@ const handleOk = async () => {
 
         </div>
 <!--        启动对话-->
-        <div class="contact-list-card-user-btn-2" @click="">
+        <div class="contact-list-card-user-btn-2" @click="close;createConversation">
 
           <div class="contact-list-menu-icon">
             <svg class="contact-list-icon" aria-hidden="true">

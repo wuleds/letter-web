@@ -91,7 +91,7 @@ const showContact = ()=>{
   contact_status.value = !contact_status.value;
 }
 
-const myId = ref(useMeStore().userInfo.userId);
+const myId = ref(useMeStore().userInfo.userName);
 </script>
 
 <style scoped>

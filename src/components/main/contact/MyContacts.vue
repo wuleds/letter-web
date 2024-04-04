@@ -13,6 +13,10 @@ onMounted(async () => {
   }
 });
 
+const emits = defineEmits(['close']);
+const close = () => {
+  emits('close');
+}
 
 </script>
 
@@ -21,7 +25,7 @@ onMounted(async () => {
   <div class="contact-list-container">
 
     <div v-if="contactList !== null || undefined" class="contact-list-contact" v-for="contact in contactList" :key="contact.contactId">
-      <ContactCard :contact="contact"></ContactCard>
+      <ContactCard :contact="contact" @close="close"></ContactCard>
     </div>
 
     <div v-if="contactList === null || undefined" style="margin-top: 10%">
