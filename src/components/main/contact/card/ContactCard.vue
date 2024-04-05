@@ -1,6 +1,7 @@
 <script setup>
 import { ref} from "vue";
 import {deleteContact} from "@/js/contact/Contact.js";
+import {createConversation} from "@/js/main/chatList/ChatList.js";
 const props = defineProps(['contact']);
 const contact = ref(props.contact);
 const show =ref(true);
@@ -57,7 +58,7 @@ const close = () => {
 
         </div>
 <!--        启动对话-->
-        <div class="contact-list-card-user-btn-2" @click="close;createConversation">
+        <div class="contact-list-card-user-btn-2" @click="close();createConversation('private',contact.contactId)">
 
           <div class="contact-list-menu-icon">
             <svg class="contact-list-icon" aria-hidden="true">

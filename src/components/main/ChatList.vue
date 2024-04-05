@@ -4,14 +4,11 @@
       <a-input v-model:value="searchValue" size="large" placeholder="搜索联系人，群组或频道" />
       <button>搜索</button>
     </div>
-
-
+    <div v-if="chatList !== undefined && chatList !== null">
     <ul>
-      <li v-for="user in chatList" :key="user.id" @click="selectUser(user)">
+      <li v-for="chat in chatList" :key="chat.chatId">
             <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }">
-
               <div class="card">
-
                   <div class="contact-photo">
                         <a-badge :count="5" :overflow-count="999">
                           <a-avatar size="large">
@@ -23,7 +20,7 @@
                   <div class="contact-data">
 
                     <div class="contact-name">
-                      <a>Name</a>
+                      <a>{{chat.toId}}</a>
                       <div class="delete-btn">
                         <svg class="chat-icon" aria-hidden="true">
                           <use xlink:href="#icon-chacha"></use>
@@ -39,24 +36,21 @@
 
       </li>
     </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 const props = defineProps(['chatList']);
-const emit = defineEmits(['selectUser']);
-const chatList = props.chatList;
+const chatList = ref(props.chatList);
 import { ref } from 'vue';
 const searchValue = ref('');
 
 const onSearch = (searchValue) => {
   //参数为用户输入的值，使用此值进行搜索
   console.log('use value', searchValue);
-};
-const selectUser = (user) => {
-  emit('selectUser', user);
-};
 
+};
 const cardStyle = {
   width: '100%',
   height: '100%',

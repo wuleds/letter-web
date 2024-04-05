@@ -8,9 +8,6 @@ import ContactCard from "@/components/main/contact/card/ContactCard.vue";
 const contactList = ref();
 onMounted(async () => {
   contactList.value = await getContactList();
-  if(contactList.value){
-    console.log("联系人为空")
-  }
 });
 
 const emits = defineEmits(['close']);

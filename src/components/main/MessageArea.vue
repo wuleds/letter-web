@@ -3,10 +3,10 @@
 
       <div class="messages-area">
         <div class="message other-person">
-          <div class="message">Hello there!</div>
+          <div class="message">1111111111111111</div>
         </div>
         <div class="message self">
-          <div class="message">Hi! How are you?</div>
+          <div class="message">00000000000000000000000000</div>
         </div>
         <div class="message other-person">
           <div class=""></div>
@@ -83,7 +83,6 @@
 <script setup>
 
 import {ref} from "vue";
-
 const user = defineProps(['user']);
 let input_text = ref('');
 const sendMessage = () => {

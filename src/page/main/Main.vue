@@ -79,14 +79,16 @@
 </template>
 
 <script setup>
-import {openNotification} from "@/js/Notify/Notify.js";
 import Contact from "/src/components/main/Contact.vue";
 import {ref} from "vue";
 import logout from "/src/js/main/logout/logout.js";
 import {useMeStore} from "@/js/store/Me.js";
+import {useChatListStore} from "@/js/store/ChatListData.js";
 import("/src/js/icon/iconfont.js")
 
 let contact_status = ref(false);
+//初始化对话列表
+useChatListStore().initialize();
 const showContact = ()=>{
   contact_status.value = !contact_status.value;
 }

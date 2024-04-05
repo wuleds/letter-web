@@ -3,42 +3,47 @@ import {reactive, ref} from "vue";
 import {defineStore} from "pinia";
 import Request from "@/utils/Request.js";
 import {openNotification} from "@/js/Notify/Notify.js";
+import {dbOps} from "@/js/db/ChatListDB.js";
 
 export const useChatListStore = defineStore('chatListData',()=>{
-    const chatListSet = ref(JSON.parse(localStorage.getItem('chatListData')) || new Set());
+    const chatList = ref([]);
+    /*type,chatId,oneId,twoId*/
 
-    function initialize(){
-        Request({
-            url: '/chat/getChatList',
-            method: 'get'
-        }).then(res=>{
-            if(res.code===200){
-                chatListSet.value = new Set(res.data.data);
-                localStorage.setItem('chatListData',JSON.stringify(Array.from(chatListSet)));
+    /**初始化聊天列表,从服务器获取数据*/
+    async function initialize(){
+        await Request({
+            url: '/conversation/list',
+            method: 'post',
+            data:reactive({
+                userId: localStorage.getItem('userId')
+            })
+        }).then(async res=>{
+            if(res.data.code==='200'){
+                chatList.value = JSON.parse(res.data.data);
+                console.log('初始对话列表');
+                console.log(chatList.value);
+                await dbOps.insertItems(chatList.value);
             }else{
-                openNotification('error',res.message);
+                openNotification('错误',res.data.msg);
             }
         })
     }
 
     /**添加对话*/
-    function addConversation(conversation){
-        chatListSet.add(conversation);
-        localStorage.setItem('chatListData',JSON.stringify(Array.from(chatListSet)));
+    async function addConversation(conversation) {
+        chatList.value.push(conversation);
+        await dbOps.insertItem(conversation);
     }
 
     /**删除对话*/
-    function delConversation(conversation){
-        chatListSet.delete(conversation);
-        localStorage.setItem('chatListData',JSON.stringify(Array.from(chatListSet)));
-    }
-
-    function getChatList(){
-        return Array.from(chatListSet);
+    function delConversation(chatId){
+        chatList.value = chatList.value.filter(chat => chat.chatId !== chatId);
+        dbOps.deleteItem(chatId);
     }
 
     return {
-        getChatList,
+        chatList,
+        initialize,
         addConversation,
         delConversation
     }
