@@ -7,7 +7,7 @@ import {useChatListStore} from "@/js/store/ChatListData.js";
 import {storeToRefs} from "pinia";
 
 //获取对话列表
-const {chatList} = storeToRefs(useChatListStore());
+const chatList = useChatListStore().chatList;
 </script>
 
 <template>

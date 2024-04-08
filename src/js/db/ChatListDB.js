@@ -1,11 +1,11 @@
 const DB_NAME = 'LetterDB';
 const STORE_NAME = 'ChatList-' + localStorage.getItem('userId')
-let DB_VERSION = 2;
+let DB_VERSION = Date.now().toString();
 
 export const dbOps = {
     openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION++);
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
 
             request.onupgradeneeded = event => {
                 const db = event.target.result;

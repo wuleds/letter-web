@@ -1,14 +1,47 @@
+<script setup>
+const props = defineProps(['chatList']);
+const chatList = props.chatList;
+import { ref } from 'vue';
+import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
+const searchValue = ref('');
+
+const onSearch = (searchValue) => {
+  //参数为用户输入的值，使用此值进行搜索
+  console.log('use value', searchValue);
+
+};
+const cardStyle = {
+  width: '100%',
+  height: '100%',
+};
+const isCurrent = (chatId) => {
+  return chatId === localStorage.getItem('CurrentChatId');
+};
+
+const changeObject = (chat) => {
+  useCurrentChatStore().setCurrentChat({
+    chatId: chat.chatId,
+    toId: chat.toId,
+    type: chat.type
+  });
+  console.log(chat.toId, chat.chatId);
+};
+
+const deleteChat = (chat) => {
+  console.log('delete chat', chat.chatId);
+};
+</script>
+
 <template>
   <div class="chatList-container">
     <div style="display: flex">
       <a-input v-model:value="searchValue" size="large" placeholder="搜索联系人，群组或频道" />
       <button>搜索</button>
     </div>
-    <div v-if="chatList !== undefined && chatList !== null">
-    <ul>
-      <li v-for="chat in chatList" :key="chat.chatId">
-            <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }">
-              <div class="card">
+    <ul v-if="chatList!== undefined && chatList !== null">
+      <li v-for="chat in chatList" :key="chat.chatId" >
+            <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent}" >
+              <div class="card" @click="changeObject(chat)">
                   <div class="contact-photo">
                         <a-badge :count="5" :overflow-count="999">
                           <a-avatar size="large">
@@ -21,7 +54,7 @@
 
                     <div class="contact-name">
                       <a>{{chat.toId}}</a>
-                      <div class="delete-btn">
+                      <div class="delete-btn" @click="deleteChat(chat)">
                         <svg class="chat-icon" aria-hidden="true">
                           <use xlink:href="#icon-chacha"></use>
                         </svg>
@@ -36,26 +69,8 @@
 
       </li>
     </ul>
-    </div>
   </div>
 </template>
-
-<script setup>
-const props = defineProps(['chatList']);
-const chatList = ref(props.chatList);
-import { ref } from 'vue';
-const searchValue = ref('');
-
-const onSearch = (searchValue) => {
-  //参数为用户输入的值，使用此值进行搜索
-  console.log('use value', searchValue);
-
-};
-const cardStyle = {
-  width: '100%',
-  height: '100%',
-};
-</script>
 
 <style>
 .chatList-container {
@@ -80,6 +95,10 @@ const cardStyle = {
 .chatList-container::-webkit-scrollbar {
   height: 5px;
   width: 2px;
+}
+
+.isCurrent{
+  background-color: #3390ec;
 }
 
 .chatList-container ul {

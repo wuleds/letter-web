@@ -19,10 +19,12 @@ export const useChatListStore = defineStore('chatListData',()=>{
             })
         }).then(async res=>{
             if(res.data.code==='200'){
-                chatList.value = JSON.parse(res.data.data);
+                JSON.parse(res.data.data).forEach(item=>{
+                    chatList.value.push(item);
+                })
                 console.log('初始对话列表');
                 console.log(chatList.value);
-                await dbOps.insertItems(chatList.value);
+                await dbOps.insertItems(JSON.parse(res.data.data));
             }else{
                 openNotification('错误',res.data.msg);
             }

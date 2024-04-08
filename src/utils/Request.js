@@ -2,7 +2,7 @@ import axios from 'axios';
 import Qs from 'qs';
 
 const baseUrl = '/api'
-const prodUrl = 'http://122.51.58.141:20800'
+const prodUrl = 'https://wules.space:20800'
 
 const instance = axios.create({
     baseURL: baseUrl, // 设置基本URL
