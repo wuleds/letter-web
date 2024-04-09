@@ -1,89 +1,66 @@
-const WebSocketClient = (() => {
-    let ws = null;
-    let heartBeatTimer = null;
-    let reconnectTimer = null;
-    const WS_URL = 'ws://your-server-websocket-url'; // 你的WebSocket服务端地址
+import * as StompJs from '@stomp/stompjs';
+import {useMeStore} from "@/js/store/Me.js";
 
-    const connect = () => {
-        if (ws !== null) {
-            console.log('WebSocket is already connected or in connecting state.');
-            return;
-        }
+const stompClient = new StompJs.Client({
+    brokerURL: '/link',
+    connectHeaders: {
+        Authorization: 'Bearer ' + localStorage.getItem('Authorization')
+    },
+    debug: function (str) {
+        console.log(str);
+    },
+    reconnectDelay: 5000,
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
+});
 
-        ws = new WebSocket(WS_URL);
 
-        ws.onopen = () => {
-            console.log('WebSocket connected');
-            startHeartBeat();
-            if (typeof onOpen === 'function') onOpen();
-        };
+stompClient.onConnect = (frame) => {
+    //连接成功
+    console.log('连接成功: ' + frame);
+    stompClient.subscribe('/user/get', (serverMessage) => {
+        //接收到消息
+        console.log("接收到消息: " + serverMessage.body);
+    });
+};
 
-        ws.onmessage = (event) => {
-            console.log('Received message:', event.data);
-            if (typeof onMessage === 'function') onMessage(event.data);
-        };
+stompClient.onWebSocketError = (error) => {
+    console.error('WebSocket 连接错误');
+    console.error(error);
+};
 
-        ws.onclose = () => {
-            console.log('WebSocket disconnected');
-            stopHeartBeat();
-            ws = null; // Clear WebSocket object
-            if (typeof onClose === 'function') onClose();
-            reconnect();
-        };
+stompClient.onStompError = (frame) => {
+    console.error('STOMP 错误 : ' + frame.headers['message']);
+    console.error('STOMP 错误 : ' + frame.body);
+};
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            ws.close(); // Will trigger onclose event
-        };
-    };
+function setConnected(connected) {
+    //展示在线状态
+    console.log(useMeStore().userInfo.userName + connected?"上线":"下线")
+}
 
-    const startHeartBeat = () => {
-        heartBeatTimer = setInterval(() => {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send('ping');
-            }
-        }, 10000); // 每10秒发送一次心跳
-    };
+export function connect() {
+    //尝试连接服务器
+    stompClient.activate();
+}
 
-    const stopHeartBeat = () => {
-        clearInterval(heartBeatTimer);
-        heartBeatTimer = null;
-    };
+export function disconnect() {
+    //断开连接
+    stompClient.deactivate().then(r => {
+        console.log("连接断开")
+    });
+    setConnected(false);
+}
 
-    const reconnect = () => {
-        if (reconnectTimer !== null) return; // 避免重复重连
-        reconnectTimer = setTimeout(() => {
-            console.log('Attempting to reconnect...');
-            connect(); // 尝试重新连接
-            reconnectTimer = null;
-        }, 5000); // 5秒后尝试重连
-    };
+export function sendToServer(message) {
+    stompClient.publish({
+        destination: "/send/server",
+        body: JSON.stringify({
+            'name': message
+        })
+    });
+}
 
-    const sendMessage = (message) => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(message);
-        } else {
-            console.error('WebSocket is not connected.');
-        }
-    };
-
-    const disconnect = () => {
-        if (ws) {
-            ws.close();
-        }
-    };
-
-// 事件钩子，根据需要重写这些方法
-    let onOpen = null;
-    let onMessage = null;
-    let onClose = null;
-
-    return {
-        connect,
-        sendMessage,
-        disconnect,
-        setOnOpen: (callback) => onOpen = callback,
-        setOnMessage: (callback) => onMessage = callback,
-        setOnClose: (callback) => onClose = callback
-    };
-})();
+export function getServerMessage(message) {
+    console.log(message);
+}
