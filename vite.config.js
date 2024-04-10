@@ -24,7 +24,7 @@ export default defineConfig({
   },
   server: {
     port: 80,
-    cors: true,
+    host: '0.0.0.0',
     proxy: {
       '/api': {
         //target: 'https://wules.space/api',
@@ -33,10 +33,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/link': {
-        target: 'ws://localhost:20800/ws',
+        target: 'http://localhost:20800',
         ws: true,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/link/, '')
       }
     }
   },

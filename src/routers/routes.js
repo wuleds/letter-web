@@ -3,7 +3,7 @@ import * as VueRouter from "vue-router"
 const routes = [
     {path:'/',redirect:'/main'},
     {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
-    {path:'/link',name:'link', component: () => import('@/page/test/WSLink.vue')},
+    {path:'/wsTest',name:'wsTest', component: () => import('@/page/test/WSLink.vue')},
     {
         path: '/main',
         name:'main',

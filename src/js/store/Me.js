@@ -16,11 +16,11 @@ import {ref} from "vue";
  *     */
 export const useMeStore = defineStore('me',()=>{
     const userInfo = ref({
-        userId: localStorage.getItem('userId') || '',
-        userName: localStorage.getItem('userName') || '',
-        userPhoto: localStorage.getItem('userPhoto') || '',
-        userTalk: localStorage.getItem('userTalk') || '',
-        userSex: localStorage.getItem('userSex') || '',
+        userId: sessionStorage.getItem('userId') || '',
+        userName: sessionStorage.getItem('userName') || '',
+        userPhoto: sessionStorage.getItem('userPhoto') || '',
+        userTalk: sessionStorage.getItem('userTalk') || '',
+        userSex: sessionStorage.getItem('userSex') || '',
     });
 
     function setUserInfo(data){
