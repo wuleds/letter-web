@@ -1,4 +1,5 @@
 import {useMeStore} from "@/js/store/Me.js";
+import {openNotification} from "@/js/Notify/Notify.js";
 
 export class WebSocketClient {
     static instance = null; // 单例
@@ -27,11 +28,12 @@ export class WebSocketClient {
 
     onOpen() {
         console.log('WebSocket 连接成功');
-        //发送验证信息
-        this.sendMessage(JSON.stringify({
+        const auth = {
             type: '1',
-            authorization: localStorage.getItem('Authorization'),
-        }));
+            authorization: localStorage.getItem('Authorization')
+        };
+        //发送验证信息
+        this.sendMessage(auth);
         // 连接成功后，开始心跳
         this.startHeartbeat();
     }
@@ -41,6 +43,9 @@ export class WebSocketClient {
             // 收到pong消息，说明连接正常
             console.log('pong');
             this.startHeartbeat(); // 重新开始心跳
+        }else {
+            //const message = JSON.parse(event.data);
+            console.log('收到消息:', event.data);
         }
     }
 
@@ -108,7 +113,8 @@ export class WebSocketClient {
         if (this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(message));
         } else {
-            console.log('WebSocket 未连接.');
+            openNotification('发送错误', 'WebSocket 未连接')
+            console.log('WebSocket 未连接');
         }
     }
 

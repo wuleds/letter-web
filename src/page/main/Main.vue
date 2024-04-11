@@ -84,7 +84,10 @@ import {ref} from "vue";
 import logout from "/src/js/main/logout/logout.js";
 import {useMeStore} from "@/js/store/Me.js";
 import {useChatListStore} from "@/js/store/ChatListData.js";
+import {WebSocketClient} from "@/js/main/ws.js";
 import("/src/js/icon/iconfont.js")
+//与服务器进行websocket连接
+const ws = WebSocketClient.getInstance();
 
 let contact_status = ref(false);
 //初始化对话列表

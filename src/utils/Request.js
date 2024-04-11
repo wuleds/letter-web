@@ -68,7 +68,7 @@ instance.interceptors.response.use(
     (response) => {
         if(response.data.code === 401){
             deleteAuthorization();
-            window.location.href = "/login"
+            window.location.href = "/user"
         }
         // 对响应数据做些什么
         //console.log('响应拦截器 - 接收到响应:', response);

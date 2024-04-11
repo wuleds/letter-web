@@ -2,8 +2,9 @@ import * as VueRouter from "vue-router"
 
 const routes = [
     {path:'/',redirect:'/main'},
-    {path:'/404',name:'404', component: () => import('@/page/responseState/404.vue')},
+    {path:'/404',name:'找不到页面啦', component: () => import('@/page/responseState/404.vue')},
     {path:'/wsTest',name:'wsTest', component: () => import('@/page/test/WSLink.vue')},
+    {path:'/voice',name:'voice', component: () => import('@/components/main/voice/Record.vue')},
     {
         path: '/main',
         name:'main',
@@ -29,7 +30,7 @@ const routes = [
             {path:'reset/:url',name:'reset', component: () => import('@/page/user/login/Reset.vue')},
         ]
     },
-
+    {path: '/:pathMatch(.*)',redirect:'/404'},
 ];
 
 const router = VueRouter.createRouter({

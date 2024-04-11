@@ -1,11 +1,7 @@
 <script setup>
-
 import ChatList from "@/components/main/ChatList.vue";
 import MessageArea from "@/components/main/MessageArea.vue";
-import {ref} from "vue";
 import {useChatListStore} from "@/js/store/ChatListData.js";
-import {storeToRefs} from "pinia";
-
 //获取对话列表
 const chatList = useChatListStore().chatList;
 </script>
