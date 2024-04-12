@@ -1,9 +1,11 @@
 <script setup>
 import {ref} from "vue";
+import {useMeStore} from "@/js/store/Me.js";
+import {getPath} from "@/js/main/message/PathController.js";
 
 const props = defineProps(["message"]);
 const message = ref(props.message);
-const isMe = ref(message.value.sender === localStorage.getItem("userId"));
+const isMe = ref(message.value.sender === useMeStore().userInfo.userId);
 
 </script>
 
@@ -11,32 +13,32 @@ const isMe = ref(message.value.sender === localStorage.getItem("userId"));
   <div class="message" :class="{'selfMes':isMe,'otherMes':!isMe}">
 
     <div>
-      <img class="avatar" :src="message.photo"  alt="photo"/>
+      <img class="avatar" :src="getPath(message.sender+ '.jpg')"  alt="photo"/>
     </div>
 
     <div>
       <!-- 图片消息 -->
-      <div v-if="message.type === 2 || message.type === 6 || message.type === 8">
+      <div v-if="message.type === 2 && message.images.length > 0">
         <a-image-preview-group>
-          <a-image v-for="img in message.images" :width="200" :src="img.path" />
+          <a-image v-for="img in message.images" :width="200" :src="getPath(img)"/>
         </a-image-preview-group>
       </div>
 
       <!-- 视频消息 -->
-      <div v-if="message.type === 3 || message.type === 7 || message.type === 8">
+      <div v-if="message.type === 2 && message.video.length > 0">
         <video :src="message.video" controls></video>
       </div>
 
       <!-- 文件消息 -->
-      <div v-if="message.type === 4 || message.type === 9">
-        <a :href="message.file.url" download>{{ message.file.name }}</a>
+      <div v-if="message.type === 3 && message.file.length > 0">
+        <a :href="getPath(message.file)" download>文件</a>
       </div>
 
       <!-- 语音消息 -->
-      <audio v-if="message.type === 5" :src="message.voice" controls></audio>
+      <audio v-if="message.type === 4" :src="getPath(message.audio)" controls></audio>
 
-      <!-- 文字 (类型 6, 7, 8, 9) -->
-      <p v-if="[1,6, 7, 8, 9].includes(message.type)">{{ message.text }}</p>
+      <!-- 文字  -->
+      <p v-if="message.type === 2 && message.text.length > 0">{{ message.text }}</p>
     </div>
 
   </div>
@@ -61,7 +63,7 @@ const isMe = ref(message.value.sender === localStorage.getItem("userId"));
   margin-bottom: 10px;
   border-radius: 20px;
   padding: 10px;
-  max-width: 60%;
+  //max-width: 10%;
 }
 .selfMes{
   background-color: #b2fab4; /* 自己的消息背景色 */
@@ -82,16 +84,4 @@ const isMe = ref(message.value.sender === localStorage.getItem("userId"));
   margin-right: 10px;
 }
 
-.content img,
-.content video {
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-top: 5px;
-}
-
-.content audio {
-  width: 100%;
-  margin-top: 5px;
-}
 </style>

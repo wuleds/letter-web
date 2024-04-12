@@ -1,7 +1,238 @@
+<script setup>
+import {ref} from "vue";
+import {WebSocketClient} from "@/js/main/ws.js";
+import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
+import Voice from "@/components/main/voice/Record.vue";
+import {useMeStore} from "@/js/store/Me.js";
+import Message from "@/components/main/message/Message.vue";
+const ws = WebSocketClient.getInstance();
+
+//文本
+const text = ref('');
+
+//摘要
+const fileDigest = ref('');
+const videoDigest = ref('');
+const imageDigest = ref([]);
+
+const visible = ref(false);
+
+const isReply = ref(false);
+const replyMessageId = ref('');
+const isRecording = ref(false);
+
+const send = async () => {
+  //发送文件
+  if(fileDigest.value !== ''){
+    ws.sendMessage({
+      chatId: useCurrentChatStore().currentChat.chatId,
+      sender: useMeStore().userInfo.userId,
+      receiver: useCurrentChatStore().currentChat.toId,
+      type: 3,
+      file: fileDigest.value,
+      replyStatus: isReply.value?1:0,
+      replyMessageId: isReply.value ? replyMessageId.value : null,
+      authorization: localStorage.getItem("Authorization")
+    });
+  }else {
+    //发送文字，图片，视频
+    ws.sendMessage({
+      chatId: useCurrentChatStore().currentChat.chatId,
+      sender: useMeStore().userInfo.userId,
+      receiver: useCurrentChatStore().currentChat.toId,
+      type: 2,
+      text: text.value.length > 0?text.value:null,
+      images: imageDigest.value.length > 0?imageDigest.value:null,
+      video: videoDigest.value.length > 0?videoDigest.value:null,
+      replyStatus: isReply.value?1:0,
+      replyMessageId: isReply.value ? replyMessageId.value : null,
+      authorization: localStorage.getItem("Authorization")
+    })
+  }
+};
+
+const record = () =>{
+  isRecording.value = !isRecording.value;
+}
+
+const getBase64 = async (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+const previewVisible = ref(false);
+const previewImage = ref('');
+const previewTitle = ref('');
+
+const imageList = ref([]);
+const videoList = ref([]);
+const fileList = ref([]);
+
+const handleCancel = () => {
+  previewVisible.value = false;
+  previewTitle.value = '';
+};
+
+const handlePreview = async file => {
+  if (!file.url && !file.preview) {
+    file.preview = await getBase64(file.originFileObj);
+  }
+  previewImage.value = file.url || file.preview;
+  previewVisible.value = true;
+  previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
+};
+
+const beforeImageUpload = async (file) =>{
+  console.log("上传照片：" + await digest(file));
+  //将文件列表清空，因为文件和视频图片不能同时上传。
+  fileList.value = [];
+}
+
+const getImageListDigest = () => {
+  imageList.value.map(async (image) => {
+    imageDigest.value.push(await digest(image) + '.' + getFileExtension(image.name));
+  });
+}
+
+const beforeVideoUpload = async (file) =>{
+  videoDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  console.log("上传视频：" + videoDigest.value);
+  //将文件列表清空，因为文件和视频图片不能同时上传。
+  fileList.value = [];
+  fileDigest.value = '';
+}
+
+const beforeFileUpload = async (file)=>{
+  fileDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  console.log("上传文件：" + fileDigest.value);
+  //将图片和视频列表清空，因为文件和视频图片不能同时上传。
+  imageList.value = [];
+  videoList.value = [];
+  videoDigest.value = '';
+}
+
+const digest = async (file)=>{
+  if (file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+}
+
+const getFileExtension = (name)=> {
+  return /\.([^\.]+)$/.exec(name)[1];
+}
+
+const messages = ref([
+  {sender:'10015',
+    type:2,
+    text:'你好',
+    images:[],
+    video: '',
+    file: '',
+    audio: '',
+    replyStatus: 0},
+  {
+    sender:'10015',
+    type:2,
+    text:'',
+    images:['10015.jpg'],
+    video: '',
+    file: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10015',
+    type:2,
+    text:'',
+    images:['10016.jpg'],
+    video: '',
+    file: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10015',
+    type:2,
+    text:'你吃饭了吗',
+    images:['10016.jpg'],
+    video: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10016',
+    type:2,
+    text:'哈哈哈哈哈',
+    images:[],
+    video: '',
+    file: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10015',
+    type:2,
+    text:'你好',
+    images:[],
+    video: '',
+    file: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10016',
+    type:2,
+    text:'我的天哪',
+    video: '',
+    images: [],
+    file: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10016',
+    type:2,
+    text:'你还好吗',
+    images:[],
+    video: '',
+    file: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10015',
+    type:2,
+    text:'我去',
+    images:[],
+    video: '',
+    audio: '',
+    replyStatus: 0
+  },
+  {
+    sender:'10015',
+    type:2,
+    text:'牛逼',
+    images:[],
+    video: '',
+    file: '',
+    replyStatus: 0
+  }
+]);
+</script>
+
 <template>
   <div class="area-container">
 
       <div class="messages-area">
+        <div v-for="msg in messages">
+          <Message :message="msg"></Message>
+        </div>
 
       </div>
 
@@ -131,135 +362,6 @@
   </div>
 </template>
 
-<script setup>
-import {ref} from "vue";
-import {WebSocketClient} from "@/js/main/ws.js";
-import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
-import Voice from "@/components/main/voice/Record.vue";
-import {useMeStore} from "@/js/store/Me.js";
-const ws = WebSocketClient.getInstance();
-
-//文本
-const text = ref('');
-
-//摘要
-const fileDigest = ref('');
-const videoDigest = ref('');
-const imageDigest = ref([]);
-
-const visible = ref(false);
-
-const isReply = ref(false);
-const replyMessageId = ref('');
-const isRecording = ref(false);
-
-const send = async () => {
-  //发送文件
-  if(fileDigest.value !== ''){
-    ws.sendMessage({
-      chatId: useCurrentChatStore().currentChat.chatId,
-      sender: useMeStore().userInfo.userId,
-      receiver: useCurrentChatStore().currentChat.toId,
-      type: 3,
-      file: fileDigest.value,
-      replyStatus: isReply.value,
-      replyMessageId: isReply.value ? replyMessageId.value : '',
-      authorization: localStorage.getItem("Authorization")
-    });
-  }else {
-    //发送图片，视频
-    ws.sendMessage({
-      chatId: useCurrentChatStore().currentChat.chatId,
-      sender: useMeStore().userInfo.userId,
-      receiver: useCurrentChatStore().currentChat.toId,
-      type: 2,
-      text: text.value,
-      //TODO images: imageDigest.value.,
-      video: videoDigest.value,
-      replyStatus: isReply.value,
-      replyMessageId: isReply.value ? replyMessageId.value : '',
-      authorization: localStorage.getItem("Authorization")
-    })
-  }
-};
-
-const record = () =>{
-  isRecording.value = !isRecording.value;
-}
-
-const getBase64 = async (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
-}
-
-const previewVisible = ref(false);
-const previewImage = ref('');
-const previewTitle = ref('');
-
-const imageList = ref([]);
-const videoList = ref([]);
-const fileList = ref([]);
-
-const handleCancel = () => {
-  previewVisible.value = false;
-  previewTitle.value = '';
-};
-
-const handlePreview = async file => {
-  if (!file.url && !file.preview) {
-    file.preview = await getBase64(file.originFileObj);
-  }
-  previewImage.value = file.url || file.preview;
-  previewVisible.value = true;
-  previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
-};
-
-const beforeImageUpload = async (file) =>{
-  console.log("上传照片：" + await digest(file));
-  //将文件列表清空，因为文件和视频图片不能同时上传。
-  fileList.value = [];
-}
-
-const getImageListDigest = () => {
-  imageList.value.map(async (image) => {
-    imageDigest.value.push(await digest(image) + '.' + getFileExtension(image.name));
-  });
-}
-
-const beforeVideoUpload = async (file) =>{
-  videoDigest.value = await digest(file) + '.' + getFileExtension(file.name);
-  console.log("上传视频：" + videoDigest.value);
-  //将文件列表清空，因为文件和视频图片不能同时上传。
-  fileList.value = [];
-  fileDigest.value = '';
-}
-
-const beforeFileUpload = async (file)=>{
-  fileDigest.value = await digest(file) + '.' + getFileExtension(file.name);
-  console.log("上传文件：" + fileDigest.value);
-  //将图片和视频列表清空，因为文件和视频图片不能同时上传。
-  imageList.value = [];
-  videoList.value = [];
-  videoDigest.value = '';
-}
-
-const digest = async (file)=>{
-  if (file) {
-    const arrayBuffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-}
-
-const getFileExtension = (name)=> {
-  return /\.([^\.]+)$/.exec(name)[1];
-}
-</script>
 
 <style>
 .area-container {

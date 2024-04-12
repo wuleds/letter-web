@@ -30,11 +30,11 @@ export const useMeStore = defineStore('me',()=>{
         userInfo.userPhoto = data.userPhoto;
         userInfo.userTalk = data.userTalk;
         userInfo.userSex = data.user;
-        localStorage.setItem('userId',data.userId);
-        localStorage.setItem('userName',data.userName);
-        localStorage.setItem('userPhoto',data.userPhoto);
-        localStorage.setItem('userTalk',data.userTalk);
-        localStorage.setItem('userSex',data.userSex);
+        sessionStorage.setItem('userId',data.userId);
+        sessionStorage.setItem('userName',data.userName);
+        sessionStorage.setItem('userPhoto',data.userPhoto);
+        sessionStorage.setItem('userTalk',data.userTalk);
+        sessionStorage.setItem('userSex',data.userSex);
     }
 
     return {

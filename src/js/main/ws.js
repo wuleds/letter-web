@@ -29,7 +29,10 @@ export class WebSocketClient {
     onOpen() {
         console.log('WebSocket 连接成功');
         const auth = {
+            chatId: 'server',
             type: '1',
+            sender: useMeStore().userInfo.userId,
+            receiver: 'server',
             authorization: localStorage.getItem('Authorization')
         };
         //发送验证信息
@@ -84,8 +87,11 @@ export class WebSocketClient {
         this.pingInterval = setInterval(() => {
             if (this.ws.readyState === WebSocket.OPEN) {
                 const ping = {
+                    chatId: 'server',
                     type: '0',
                     text: 'ping',
+                    sender: useMeStore().userInfo.userId,
+                    receiver: 'server',
                     authorization: localStorage.getItem('Authorization')
                 };
                 this.sendMessage(ping);
