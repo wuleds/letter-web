@@ -3,28 +3,27 @@ import {reactive, ref} from "vue";
 import {defineStore} from "pinia";
 import Request from "@/utils/Request.js";
 import {openNotification} from "@/js/Notify/Notify.js";
-import {dbOps} from "@/js/db/ChatListDB.js";
+import {chatListDbOps} from "@/js/db/ChatListDB.js";
 
 export const useChatListStore = defineStore('chatListData',()=>{
-    const chatList = ref([]);
+    const chatList = ref(new Map());
     /*type,chatId,oneId,twoId*/
 
-    /**初始化聊天列表,从服务器获取数据*/
+    /**刷新聊天列表,从服务器获取数据*/
     async function initialize(){
         await Request({
             url: '/conversation/list',
             method: 'post',
             data:reactive({
-                userId: localStorage.getItem('userId')
+                userId: sessionStorage.getItem('userId')
             })
         }).then(async res=>{
             if(res.data.code==='200'){
                 JSON.parse(res.data.data).forEach(item=>{
-                    chatList.value.push(item);
+                    chatList.value.set(item.chatId,item);
                 })
-                console.log('初始对话列表');
-                console.log(chatList.value);
-                await dbOps.insertItems(JSON.parse(res.data.data));
+                console.log('获取对话列表');
+                await chatListDbOps.insertItems(JSON.parse(res.data.data));
             }else{
                 openNotification('错误',res.data.msg);
             }
@@ -33,20 +32,29 @@ export const useChatListStore = defineStore('chatListData',()=>{
 
     /**添加对话*/
     async function addConversation(conversation) {
-        chatList.value.push(conversation);
-        await dbOps.insertItem(conversation);
+        chatList.value.set(conversation.chatId,conversation);
+        await chatListDbOps.insertItem(conversation);
     }
 
     /**删除对话*/
     function delConversation(chatId){
-        chatList.value = chatList.value.filter(chat => chat.chatId !== chatId);
-        dbOps.deleteItem(chatId);
+        chatList.value.delete(chatId);
+        chatListDbOps.deleteItem(chatId).then(r => {});
     }
+/*
+    /!**获取对话列表*!/
+    function getChatList(){
+        const chats = [];
+        chatList.value.forEach((value, key) => {
+            chats.push(value);
+            console.log(value)
+        })
+        return chats;
+    }*/
 
     return {
         chatList,
         initialize,
         addConversation,
-        delConversation
-    }
+        delConversation,}
 })

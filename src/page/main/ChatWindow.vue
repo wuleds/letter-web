@@ -1,14 +1,11 @@
 <script setup>
 import ChatList from "@/components/main/ChatList.vue";
 import MessageArea from "@/components/main/MessageArea.vue";
-import {useChatListStore} from "@/js/store/ChatListData.js";
-//获取对话列表
-const chatList = useChatListStore().chatList;
 </script>
 
 <template>
   <div class="window-container">
-    <ChatList :chatList="chatList"/>
+    <ChatList/>
     <MessageArea/>
   </div>
 </template>

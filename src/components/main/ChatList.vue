@@ -1,8 +1,9 @@
 <script setup>
-const props = defineProps(['chatList']);
-const chatList = props.chatList;
+import {useChatListStore} from "@/js/store/ChatListData.js";
+const chatList = useChatListStore().chatList;
 import { ref } from 'vue';
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
+import {getPath} from "@/js/main/message/PathController.js";
 const searchValue = ref('');
 
 const onSearch = (searchValue) => {
@@ -19,12 +20,13 @@ const isCurrent = (chatId) => {
 };
 
 const changeObject = (chat) => {
+  console.log('change chat', chat);
+  console.log(chat.chatId);
   useCurrentChatStore().setCurrentChat({
     chatId: chat.chatId,
     toId: chat.toId,
     type: chat.type
   });
-  console.log(chat.toId, chat.chatId);
 };
 
 const deleteChat = (chat) => {
@@ -39,13 +41,13 @@ const deleteChat = (chat) => {
       <button>搜索</button>
     </div>
     <ul v-if="chatList!== undefined && chatList !== null">
-      <li v-for="chat in chatList" :key="chat.chatId" >
+      <li v-for="value in chatList"  >
             <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent}" >
-              <div class="card" @click="changeObject(chat)">
+              <div class="card" @click="changeObject(value.at(1))">
                   <div class="contact-photo">
                         <a-badge :count="5" :overflow-count="999">
                           <a-avatar size="large">
-                            <template #icon><img src="https://avatars.githubusercontent.com/u/76564306?s=40&v=4" alt="头像"></template>
+                            <template #icon><img :src="getPath(value.at(1).toId + '.jpg')" alt="头像"></template>
                           </a-avatar>
                         </a-badge>
                   </div>
@@ -53,15 +55,13 @@ const deleteChat = (chat) => {
                   <div class="contact-data">
 
                     <div class="contact-name">
-                      <a>{{chat.toId}}</a>
-                      <div class="delete-btn" @click="deleteChat(chat)">
+                      <a>{{value.at(1).toId}}</a>
+                      <div class="delete-btn" @click="deleteChat(value.at(1))">
                         <svg class="chat-icon" aria-hidden="true">
                           <use xlink:href="#icon-chacha"></use>
                         </svg>
                       </div>
                     </div>
-
-                    <div class="latest-msg">This is a Message! This is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a MessageThis is a Message</div>
                   </div>
 
               </div>

@@ -22,7 +22,7 @@ export function createConversation(type,toId) {
             //存入聊天列表
             const conversation = JSON.parse(res.data.data);
             //将对话存入store
-            useChatListStore().addConversation(conversation);
+            useChatListStore().addConversation(conversation).then(r => {});
             //设置当前对话
             useCurrentChatStore().setCurrentChat(conversation);
         }

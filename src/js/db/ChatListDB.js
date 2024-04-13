@@ -1,8 +1,8 @@
 const DB_NAME = 'LetterDB';
-const STORE_NAME = 'ChatList-' + localStorage.getItem('userId')
-let DB_VERSION = Date.now().toString();
+const STORE_NAME = 'ChatList-' + sessionStorage.getItem('userId')
+let DB_VERSION = Date.now();
 
-export const dbOps = {
+export const chatListDbOps = {
     openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -37,10 +37,15 @@ export const dbOps = {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
         const store = transaction.objectStore(STORE_NAME);
         return new Promise((resolve, reject) => {
-            const request = store.add({chatId: item.chatId, type: item.type, myId: item.myId, toId: item.toId});
+            const request = store.add({
+                chatId: item.chatId,
+                type: item.type,
+                myId: item.myId,
+                toId: item.toId
+            });
             request.onsuccess = () => resolve();
             request.onerror = () => reject(request.error);
-        });
+        })
     },
 
     async deleteItem(chatId) {

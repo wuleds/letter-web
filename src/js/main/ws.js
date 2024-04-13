@@ -1,5 +1,7 @@
 import {useMeStore} from "@/js/store/Me.js";
 import {openNotification} from "@/js/Notify/Notify.js";
+import {useUnreadCountStore} from "@/js/store/UnreadCount.js";
+import {messageDBOps} from "@/js/db/MessageDB.js";
 
 export class WebSocketClient {
     static instance = null; // 单例
@@ -37,18 +39,50 @@ export class WebSocketClient {
         };
         //发送验证信息
         this.sendMessage(auth);
+        console.log('发送验证信息');
         // 连接成功后，开始心跳
         this.startHeartbeat();
+        console.log('开始心跳');
+        // 开始重连机制
+        this.startReconnect();
+        console.log('重连机制启动');
     }
 
-    onMessage(event) {
-        if (event.data === 'pong') {
-            // 收到pong消息，说明连接正常
-            console.log('pong');
-            this.startHeartbeat(); // 重新开始心跳
-        }else {
-            //const message = JSON.parse(event.data);
-            console.log('收到消息:', event.data);
+    onMessage(serverMessage) {
+        const message = JSON.parse(serverMessage.data);
+        const type = message.type;
+        const text = message.text;
+        if(type === '0') {
+            //心跳包
+            console.log(text);
+        }else if(type === '1') {
+            //禁止重连
+            console.log(text);
+            this.linkState = false;
+        }else if(type === '2') {
+            //系统通知
+            openNotification('系统通知',text);
+        }else if(type === '3') {
+            //操作结果
+            console.log(text);
+        }else if(type === '4') {
+            //未读消息数
+            const unreadList = JSON.parse(text);
+            unreadList.forEach((item) => {
+                useUnreadCountStore().setCount(item.chatId,item.lastMessageId);
+            })
+        }else if(type === '5') {
+            //获取消息
+            const unreadMessagesList = JSON.parse(text);
+            const chatId = message.chatId;
+            const chatType = message.chatType;
+            //将消息存入数据库
+            messageDBOps.insertItems(chatId,unreadMessagesList).then(() => {});
+        }else if(type === '6'){
+            //删除消息
+            const messageId = text;
+            const chatId = message.chatId;
+            messageDBOps.deleteItem(chatId,messageId).then(() => {});
         }
     }
 
@@ -57,8 +91,6 @@ export class WebSocketClient {
         this.stopHeartbeat();
         if(this.linkState) {
             this.reconnect();
-        }else {
-            this.linkState = true;
         }
     }
 
@@ -80,6 +112,7 @@ export class WebSocketClient {
         }, 5000); // 5秒后尝试重连
     }
 
+    /**启动心跳包机制，每10发送一次心跳包，表示前端在线*/
     startHeartbeat() {
         if (this.pingInterval) {
             clearInterval(this.pingInterval);
@@ -98,14 +131,16 @@ export class WebSocketClient {
                 console.log('ping');
             }
         }, 10000); // 每10秒发送一次ping
+    }
 
-        // 如果2秒内没有收到pong，视为连接异常，尝试重连
+    //开始重连机制，每2秒检查一次连接状态
+    startReconnect(){
         setTimeout(() => {
-            if (this.ws.readyState !== WebSocket.OPEN) {
-                console.log('未收到pong ，重连接');
+            if (this.ws.readyState !== WebSocket.OPEN && this.linkState) {
+                console.log('重连接');
                 this.reconnect();
             }
-        }, 12000);
+        }, 2000);
     }
 
     stopHeartbeat() {

@@ -136,34 +136,6 @@ const messages = ref([
     video: '',
     file: '',
     audio: '',
-    replyStatus: 0},
-  {
-    sender:'10015',
-    type:2,
-    text:'',
-    images:['10015.jpg'],
-    video: '',
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10015',
-    type:2,
-    text:'',
-    images:['10016.jpg'],
-    video: '',
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10015',
-    type:2,
-    text:'你吃饭了吗',
-    images:['10016.jpg'],
-    video: '',
-    audio: '',
     replyStatus: 0
   },
   {
