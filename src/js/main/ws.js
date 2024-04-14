@@ -11,6 +11,8 @@ export class WebSocketClient {
     pingInterval = null; // 心跳包定时器
     reconnectTimeout = null; // 重连定时器
     linkState = true;
+    unreadCountInterval = null;
+    reconnectInterval = null;
 
     constructor() {
         if (WebSocketClient.instance) {
@@ -46,6 +48,9 @@ export class WebSocketClient {
         // 开始重连机制
         this.startReconnect();
         console.log('重连机制启动');
+        // 开始获取未读消息数
+        this.startGetUnreadCount();
+        console.log('开始获取未读消息数');
     }
 
     onMessage(serverMessage) {
@@ -68,6 +73,7 @@ export class WebSocketClient {
         }else if(type === '4') {
             //未读消息数
             const unreadList = JSON.parse(text);
+            console.log(unreadList);
             unreadList.forEach((item) => {
                 useUnreadCountStore().setCount(item.chatId,item.lastMessageId);
             })
@@ -77,7 +83,11 @@ export class WebSocketClient {
             const chatId = message.chatId;
             const chatType = message.chatType;
             //将消息存入数据库
-            messageDBOps.insertItems(chatId,unreadMessagesList).then(() => {});
+            if(type === 'group' && chatType === 'channel') {
+                messageDBOps.insertItems(chatId,unreadMessagesList).then(() => {});
+            }else {
+                //私聊消息
+            }
         }else if(type === '6'){
             //删除消息
             const messageId = text;
@@ -135,12 +145,15 @@ export class WebSocketClient {
 
     //开始重连机制，每2秒检查一次连接状态
     startReconnect(){
-        setTimeout(() => {
-            if (this.ws.readyState !== WebSocket.OPEN && this.linkState) {
-                console.log('重连接');
+        if (this.reconnectInterval) {
+            clearInterval(this.pingInterval);
+        }
+        this.reconnectInterval = setInterval(() => {
+            if (this.ws.readyState !== WebSocket.OPEN) {
                 this.reconnect();
+                console.log('开始重新连接');
             }
-        }, 2000);
+        }, 5000); // 每5秒尝试重连
     }
 
     stopHeartbeat() {
@@ -148,6 +161,27 @@ export class WebSocketClient {
             clearInterval(this.pingInterval);
             this.pingInterval = null;
         }
+    }
+
+    //开始获取未读消息数
+    startGetUnreadCount(){
+        if (this.unreadCountInterval) {
+            clearInterval(this.pingInterval);
+        }
+        this.unreadCountInterval = setInterval(() => {
+            if (this.ws.readyState === WebSocket.OPEN) {
+                const last = {
+                    chatId: 'server',
+                    type: '20',
+                    text: JSON.stringify(useUnreadCountStore().getAllLastMessageId()),
+                    sender: useMeStore().userInfo.userId,
+                    receiver: 'server',
+                    authorization: localStorage.getItem('Authorization')
+                };
+                this.sendMessage(last);
+                console.log('获取未读消息数');
+            }
+        }, 1000); // 每10秒发送一次ping
     }
 
     sendMessage(message) {

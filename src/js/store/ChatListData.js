@@ -6,8 +6,8 @@ import {openNotification} from "@/js/Notify/Notify.js";
 import {chatListDbOps} from "@/js/db/ChatListDB.js";
 
 export const useChatListStore = defineStore('chatListData',()=>{
+    //对话列表,key为chatId，value为对话对象：{type,chatId,oneId,twoId}
     const chatList = ref(new Map());
-    /*type,chatId,oneId,twoId*/
 
     /**刷新聊天列表,从服务器获取数据*/
     async function initialize(){
@@ -22,7 +22,8 @@ export const useChatListStore = defineStore('chatListData',()=>{
                 JSON.parse(res.data.data).forEach(item=>{
                     chatList.value.set(item.chatId,item);
                 })
-                console.log('获取对话列表');
+                console.log('pinia:');
+                console.log(chatList.value);
                 await chatListDbOps.insertItems(JSON.parse(res.data.data));
             }else{
                 openNotification('错误',res.data.msg);
@@ -32,13 +33,13 @@ export const useChatListStore = defineStore('chatListData',()=>{
 
     /**添加对话*/
     async function addConversation(conversation) {
-        chatList.value.set(conversation.chatId,conversation);
+        chatList.set(conversation.chatId,conversation);
         await chatListDbOps.insertItem(conversation);
     }
 
     /**删除对话*/
     function delConversation(chatId){
-        chatList.value.delete(chatId);
+        chatList.delete(chatId);
         chatListDbOps.deleteItem(chatId).then(r => {});
     }
 /*
@@ -56,5 +57,6 @@ export const useChatListStore = defineStore('chatListData',()=>{
         chatList,
         initialize,
         addConversation,
-        delConversation,}
+        delConversation
+    }
 })

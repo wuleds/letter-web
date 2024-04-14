@@ -1,7 +1,7 @@
 //存储本地用户信息
 
 import {defineStore} from "pinia";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 
 /**
  *     String userId;   //用户id
@@ -15,7 +15,7 @@ import {ref} from "vue";
  *     Date userBirthday; //用户生日，私密
  *     */
 export const useMeStore = defineStore('me',()=>{
-    const userInfo = ref({
+    const userInfo = reactive({
         userId: sessionStorage.getItem('userId') || '',
         userName: sessionStorage.getItem('userName') || '',
         userPhoto: sessionStorage.getItem('userPhoto') || '',
@@ -24,7 +24,8 @@ export const useMeStore = defineStore('me',()=>{
     });
 
     function setUserInfo(data){
-        console.log(data)
+        console.log('登录信息：')
+        console.log(data);
         userInfo.userId = data.userId;
         userInfo.userName = data.userName;
         userInfo.userPhoto = data.userPhoto;

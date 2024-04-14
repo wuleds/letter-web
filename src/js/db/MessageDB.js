@@ -90,5 +90,24 @@ export const messageDBOps = {
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
+    },
+
+    //获取最后一条消息的id
+    async getLastMessageIdInDB(storeName) {
+        const db = await this.openDB(storeName);
+        const transaction = db.transaction([storeName], 'readonly');
+        const store = transaction.objectStore(storeName);
+        return new Promise((resolve, reject) => {
+            const request = store.getAll();
+            request.onsuccess = () => {
+                const messages = request.result;
+                if (messages.length === 0) {
+                    resolve(null);
+                } else {
+                    resolve(messages[messages.length - 1].messageId);
+                }
+            };
+            request.onerror = () => reject(request.error);
+        });
     }
 }

@@ -1,10 +1,21 @@
 <script setup>
 import {useChatListStore} from "@/js/store/ChatListData.js";
-const chatList = useChatListStore().chatList;
-import { ref } from 'vue';
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
+import {useUnreadCountStore} from "@/js/store/UnreadCount.js";
+import { ref } from 'vue';
 import {getPath} from "@/js/main/message/PathController.js";
 const searchValue = ref('');
+
+//获取状态库的对话列表
+const chatList = ref(useChatListStore().chatList);
+const init = (list) => {
+  const chatIds = [...list.keys()];
+  console.log('ChatList.Vue:')
+  console.log(list);
+  useUnreadCountStore().initLastMessage(chatIds);
+  useUnreadCountStore().initUnread(chatIds);
+}
+init(chatList.value);
 
 const onSearch = (searchValue) => {
   //参数为用户输入的值，使用此值进行搜索
@@ -32,6 +43,7 @@ const changeObject = (chat) => {
 const deleteChat = (chat) => {
   console.log('delete chat', chat.chatId);
 };
+
 </script>
 
 <template>
@@ -40,6 +52,7 @@ const deleteChat = (chat) => {
       <a-input v-model:value="searchValue" size="large" placeholder="搜索联系人，群组或频道" />
       <button>搜索</button>
     </div>
+
     <ul v-if="chatList!== undefined && chatList !== null">
       <li v-for="value in chatList"  >
             <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent}" >
