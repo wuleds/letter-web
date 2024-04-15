@@ -20,26 +20,30 @@ export const useChatListStore = defineStore('chatListData',()=>{
         }).then(async res=>{
             if(res.data.code==='200'){
                 JSON.parse(res.data.data).forEach(item=>{
-                    chatList.value.set(item.chatId,item);
+                    chatList.value.set(item.chatId,{
+                        type: item.type,
+                        chatId: item.chatId,
+                        myId: item.myId,
+                        toId: item.toId
+                    });
                 })
-                console.log('pinia:');
-                console.log(chatList.value);
                 await chatListDbOps.insertItems(JSON.parse(res.data.data));
             }else{
                 openNotification('错误',res.data.msg);
             }
+
         })
     }
 
     /**添加对话*/
     async function addConversation(conversation) {
-        chatList.set(conversation.chatId,conversation);
+        chatList.value.set(conversation.chatId,conversation);
         await chatListDbOps.insertItem(conversation);
     }
 
     /**删除对话*/
     function delConversation(chatId){
-        chatList.delete(chatId);
+        chatList.value.delete(chatId);
         chatListDbOps.deleteItem(chatId).then(r => {});
     }
 /*
@@ -57,6 +61,6 @@ export const useChatListStore = defineStore('chatListData',()=>{
         chatList,
         initialize,
         addConversation,
-        delConversation
+        delConversation,
     }
 })

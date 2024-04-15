@@ -2,6 +2,9 @@ import {useMeStore} from "@/js/store/Me.js";
 import {openNotification} from "@/js/Notify/Notify.js";
 import {useUnreadCountStore} from "@/js/store/UnreadCount.js";
 import {messageDBOps} from "@/js/db/MessageDB.js";
+import {useChatListStore} from "@/js/store/ChatListData.js";
+import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
+import {usePrivateChatStore} from "@/js/store/PrivateChat.js";
 
 export class WebSocketClient {
     static instance = null; // 单例
@@ -12,6 +15,7 @@ export class WebSocketClient {
     reconnectTimeout = null; // 重连定时器
     linkState = true;
     unreadCountInterval = null;
+    unreadMessageInterval = null;
     reconnectInterval = null;
 
     constructor() {
@@ -50,7 +54,9 @@ export class WebSocketClient {
         console.log('重连机制启动');
         // 开始获取未读消息数
         this.startGetUnreadCount();
-        console.log('开始获取未读消息数');
+        console.log('开始获取未读数');
+        this.startGetMessage();
+        console.log('开始获取未读消息')
     }
 
     onMessage(serverMessage) {
@@ -62,31 +68,38 @@ export class WebSocketClient {
             console.log(text);
         }else if(type === '1') {
             //禁止重连
-            console.log(text);
-            this.linkState = false;
+            console.log('禁止重连'+text);
+            //this.linkState = false;
         }else if(type === '2') {
             //系统通知
             openNotification('系统通知',text);
         }else if(type === '3') {
             //操作结果
-            console.log(text);
+            console.log('操作结果：'+text);
         }else if(type === '4') {
-            //未读消息数
+            //未读消息数,是云端最新消息id - 本地最新消息id
             const unreadList = JSON.parse(text);
-            console.log(unreadList);
             unreadList.forEach((item) => {
                 useUnreadCountStore().setCount(item.chatId,item.lastMessageId);
             })
         }else if(type === '5') {
             //获取消息
-            const unreadMessagesList = JSON.parse(text);
+            let unreadMessagesList = JSON.parse(text);
             const chatId = message.chatId;
             const chatType = message.chatType;
             //将消息存入数据库
-            if(type === 'group' && chatType === 'channel') {
+            if(unreadMessagesList === null || unreadMessagesList === undefined || unreadMessagesList.length === 0) {
+                console.log('没有收到新消息');
+            }else if(chatType === 'group' && chatType === 'channel') {
+                //群组和频道消息存入数据库,并设置本地最新消息
                 messageDBOps.insertItems(chatId,unreadMessagesList).then(() => {});
-            }else {
-                //私聊消息
+                useUnreadCountStore().updateLastMessageId(chatId);
+            }else if(chatType === 'private'){
+                //私聊消息,存入专门的状态库
+                //设更新本地最新消息id
+                useUnreadCountStore().setLastMessageId(chatId,unreadMessagesList[unreadMessagesList.length-1].messageId);
+                //将私聊消息存入状态库
+                usePrivateChatStore().insertMessages(chatId,unreadMessagesList);
             }
         }else if(type === '6'){
             //删除消息
@@ -99,9 +112,9 @@ export class WebSocketClient {
     onClose() {
         console.log('WebSocket 断开连接');
         this.stopHeartbeat();
-        if(this.linkState) {
+        //if(this.linkState) {
             this.reconnect();
-        }
+       // }
     }
 
     onError(error) {
@@ -110,9 +123,6 @@ export class WebSocketClient {
     }
 
     reconnect() {
-        if(this.pingInterval){
-            clearInterval(this.pingInterval);
-        }
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
         }
@@ -165,24 +175,62 @@ export class WebSocketClient {
 
     //开始获取未读消息数
     startGetUnreadCount(){
+        const chatArray = [];
+        useChatListStore().chatList.forEach((value,key) => {
+            chatArray.push(value);
+        });
+        //初始化本地最新消息
+        useUnreadCountStore().initLastMessage(chatArray);
+        console.log(chatArray)
+        //初始化未读消息数
+        useUnreadCountStore().initUnread(chatArray);
+
         if (this.unreadCountInterval) {
             clearInterval(this.pingInterval);
         }
         this.unreadCountInterval = setInterval(() => {
             if (this.ws.readyState === WebSocket.OPEN) {
+                const lastMessageArray = [];
+                useUnreadCountStore().lastMessage.forEach((value, key) => {
+                    lastMessageArray.push({
+                        chatId: key,
+                        lastMessageId: value
+                    });
+                })
                 const last = {
                     chatId: 'server',
                     type: '20',
-                    text: JSON.stringify(useUnreadCountStore().getAllLastMessageId()),
+                    text: JSON.stringify(lastMessageArray),
                     sender: useMeStore().userInfo.userId,
                     receiver: 'server',
                     authorization: localStorage.getItem('Authorization')
                 };
                 this.sendMessage(last);
-                console.log('获取未读消息数');
             }
         }, 1000); // 每10秒发送一次ping
     }
+
+    //获取当前未读消息
+    startGetMessage(){
+        if(this.unreadMessageInterval){
+            clearInterval(this.unreadMessageInterval);
+        }
+        this.unreadCountInterval = setInterval(() => {
+            const chatId = useCurrentChatStore().currentChat.chatId;
+            const text = useUnreadCountStore().lastMessage.get(chatId) || null
+            const request = {
+                chatId: chatId,
+                type: '21',
+                text: text !== null ? text  : '0',
+                sender: useMeStore().userInfo.userId,
+                receiver: 'server',
+                authorization: localStorage.getItem('Authorization')
+            }
+            this.sendMessage(request);
+        },1000) //每1秒获取一次未读消息
+
+    }
+
 
     sendMessage(message) {
         if (this.ws.readyState === WebSocket.OPEN) {
@@ -195,7 +243,7 @@ export class WebSocketClient {
 
     disconnect() {
         this.stopHeartbeat();
-        this.linkState = false;
+      //  this.linkState = false;
         this.ws.close();
     }
 

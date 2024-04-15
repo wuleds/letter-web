@@ -5,40 +5,44 @@ import {getPath} from "@/js/main/message/PathController.js";
 
 const props = defineProps(["message"]);
 const message = ref(props.message);
-const isMe = ref(message.value.sender === useMeStore().userInfo.userId);
+const isMe = ref(message.value.senderId === useMeStore().userInfo.userId);
 
+const exist = (item) => {
+  return item !== undefined && item !== null && item !== '' && item.length > 0;
+};
 </script>
 
 <template>
   <div class="message" :class="{'selfMes':isMe,'otherMes':!isMe}">
-
     <div>
-      <img class="avatar" :src="getPath(message.sender+ '.jpg')"  alt="photo"/>
+      <img class="avatar" :src="getPath(message.senderId+ '.jpg')"  alt="photo"/>
     </div>
+    {{message}}
 
     <div>
+
       <!-- 图片消息 -->
-      <div v-if="message.type === 2 && message.images.length > 0">
+      <div v-if="message.type === '2' && exist(message.image)">
         <a-image-preview-group>
           <a-image v-for="img in message.images" :width="200" :src="getPath(img)"/>
         </a-image-preview-group>
       </div>
 
       <!-- 视频消息 -->
-      <div v-if="message.type === 2 && message.video.length > 0">
+      <div v-if="message.type === '2' && exist(message.video)">
         <video :src="message.video" controls></video>
       </div>
 
       <!-- 文件消息 -->
-      <div v-if="message.type === 3 && message.file.length > 0">
+      <div v-if="message.type === '3' && exist(message.file)">
         <a :href="getPath(message.file)" download>文件</a>
       </div>
 
       <!-- 语音消息 -->
-      <audio v-if="message.type === 4" :src="getPath(message.audio)" controls></audio>
+      <audio v-if="message.type === '4' && exist(message.video)" :src="getPath(message.audio)" controls></audio>
 
       <!-- 文字  -->
-      <p v-if="message.type === 2 && message.text.length > 0">{{ message.text }}</p>
+      <p v-if="message.type === '2' && exist(message.text)">{{ message.text }}</p>
     </div>
 
   </div>

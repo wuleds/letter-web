@@ -2,37 +2,28 @@
 import {useChatListStore} from "@/js/store/ChatListData.js";
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
 import {useUnreadCountStore} from "@/js/store/UnreadCount.js";
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import {getPath} from "@/js/main/message/PathController.js";
 const searchValue = ref('');
 
-//获取状态库的对话列表
-const chatList = ref(useChatListStore().chatList);
-const init = (list) => {
-  const chatIds = [...list.keys()];
-  console.log('ChatList.Vue:')
-  console.log(list);
-  useUnreadCountStore().initLastMessage(chatIds);
-  useUnreadCountStore().initUnread(chatIds);
-}
-init(chatList.value);
-
+const unreadCount = computed(()=>useUnreadCountStore().unreadCounts);
+const chatList = computed(()=>useChatListStore().chatList);
 const onSearch = (searchValue) => {
-  //参数为用户输入的值，使用此值进行搜索
+  //TODO 参数为用户输入的值，使用此值进行搜索
   console.log('use value', searchValue);
-
 };
 const cardStyle = {
   width: '100%',
   height: '100%',
 };
-const isCurrent = (chatId) => {
-  return chatId === localStorage.getItem('CurrentChatId');
-};
+
+const isCurrent = computed(() => {
+  return (chatId) => {
+    return chatId === useCurrentChatStore().currentChat.chatId;
+  };
+});
 
 const changeObject = (chat) => {
-  console.log('change chat', chat);
-  console.log(chat.chatId);
   useCurrentChatStore().setCurrentChat({
     chatId: chat.chatId,
     toId: chat.toId,
@@ -55,10 +46,10 @@ const deleteChat = (chat) => {
 
     <ul v-if="chatList!== undefined && chatList !== null">
       <li v-for="value in chatList"  >
-            <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent}" >
+            <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent(value.at(1).chatId)}" >
               <div class="card" @click="changeObject(value.at(1))">
                   <div class="contact-photo">
-                        <a-badge :count="5" :overflow-count="999">
+                        <a-badge :count="unreadCount.get(value.at(1).chatId)" :overflow-count="999">
                           <a-avatar size="large">
                             <template #icon><img :src="getPath(value.at(1).toId + '.jpg')" alt="头像"></template>
                           </a-avatar>

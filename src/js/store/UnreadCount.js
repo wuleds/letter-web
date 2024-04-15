@@ -2,6 +2,7 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
 import {messageDBOps} from "@/js/db/MessageDB.js";
+import {usePrivateChatStore} from "@/js/store/PrivateChat.js";
 
 export const useUnreadCountStore = defineStore('unreadCount',()=>{
         //聊天列表的未读消息数
@@ -9,17 +10,24 @@ export const useUnreadCountStore = defineStore('unreadCount',()=>{
         //聊天列表的最新消息
         const lastMessage = ref(new Map());
 
-        const initUnread = (chatIds) => {
-            chatIds.forEach(chatId => {
-                unreadCounts.value.set(chatId, 0);
+        const initUnread = (chats) => {
+            chats.forEach(chat => {
+                unreadCounts.value.set(chat.chatId, 0);
             });
         }
 
-        const initLastMessage = (chatIds) => {
-            chatIds.forEach(chatId => {
-                messageDBOps.getLastMessageIdInDB(chatId).then(messageId => {
-                    lastMessage.value.set(chatId, messageId);
-                })
+        const initLastMessage = (chats) => {
+            chats.forEach(chat => {
+                if(chat.type === 'private'){
+                    lastMessage.value.set(chat.chatId, 0);
+                    //初始化私聊消息存储
+                    usePrivateChatStore().addPrivateChat(chat.chatId);
+                }else {
+                    //根据对话列表，从数据库获取最新消息的id
+                    messageDBOps.getLastMessageIdInDB(chat.chatId).then(messageId => {
+                        lastMessage.value.set(chat.chatId, messageId);
+                    })
+                }
             });
         }
 
@@ -27,13 +35,15 @@ export const useUnreadCountStore = defineStore('unreadCount',()=>{
             unreadCounts.value.set(chatId, count);
         }
 
-        //以数组的形式返回最新消息的id
-        const getAllLastMessageId = () => {
-            const lastMessageId = [];
-            lastMessage.value.forEach((value, key) => {
-                lastMessageId.push(value);
-            });
-            return lastMessageId;
+        const updateLastMessageId = (chatId) => {
+            messageDBOps.getLastMessageIdInDB(chatId).then(messageId => {
+                lastMessage.value.set(chatId, messageId);
+                console.log('更新最新消息id:' + chatId + ':' + messageId)
+            })
+        }
+
+        const setLastMessageId = (chatId, messageId) => {
+            lastMessage.value.set(chatId, messageId);
         }
 
         return {
@@ -42,6 +52,7 @@ export const useUnreadCountStore = defineStore('unreadCount',()=>{
             initUnread,
             initLastMessage,
             lastMessage,
-            getAllLastMessageId
+            updateLastMessageId,
+            setLastMessageId
         }
 })

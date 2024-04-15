@@ -5,31 +5,35 @@ import Request from "@/utils/Request.js";
 import {openNotification} from "@/js/Notify/Notify.js";
 import {chatListDbOps} from "@/js/db/ChatListDB.js";
 
-const usePrivateChatStore = defineStore('privateChat',()=> {
+export const usePrivateChatStore = defineStore('privateChat',()=> {
     const privateChats = ref(new Map());
 
-    const currentPrivateChat = (chatId) => {
+    const getCurrentPrivateChat = (chatId) => {
         return privateChats.value.get(chatId);
     }
 
     //添加一个新的私聊存储
-    const addPrivateChat = (chatId, messages) => {
-        privateChats.value.set(chatId, messages);
+    const addPrivateChat = (chatId) => {
+        privateChats.value.set(chatId, []);
     }
 
     //往现有的私聊存储里添加新的信息
-    const insertMessage = (chatId, messages) => {
-        const privateChat = privateChats.value.get(chatId);
-        messages.foreach(message => {
+    const insertMessages = (chatId, messages) => {
+        let array = messages;
+        let privateChat =  privateChats.value.get(chatId);
+        if(privateChat === undefined){
+            privateChat = [];
+        }
+        array.forEach(message => {
             privateChat.push(message);
         });
-        privateChats.value.set(chatId, messages);
+        privateChats.value.set(chatId, privateChat);
     }
 
     return {
         privateChats,
-        currentPrivateChat,
+        getCurrentPrivateChat,
         addPrivateChat,
-        insertMessage
+        insertMessages
     }
 })

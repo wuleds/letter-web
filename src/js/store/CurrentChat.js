@@ -5,9 +5,9 @@ import { reactive } from "vue";
 export const useCurrentChatStore = defineStore('currentChat',()=>{
     const currentChat = reactive({
         //私聊private，群组group，频道channel
-        type: localStorage.getItem('CurrentChatType'),
-        chatId: localStorage.getItem('CurrentChatId'),
-        toId: localStorage.getItem('CurrentToId')
+        type: localStorage.getItem('CurrentChatType') || '',
+        chatId: localStorage.getItem('CurrentChatId') || '',
+        toId: localStorage.getItem('CurrentToId') || ''
     });
 
     function setCurrentChat(data){

@@ -1,10 +1,11 @@
 <script setup>
-import {ref} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {WebSocketClient} from "@/js/main/ws.js";
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
 import Voice from "@/components/main/voice/Record.vue";
 import {useMeStore} from "@/js/store/Me.js";
 import Message from "@/components/main/message/Message.vue";
+import {usePrivateChatStore} from "@/js/store/PrivateChat.js";
 const ws = WebSocketClient.getInstance();
 
 //文本
@@ -22,14 +23,15 @@ const replyMessageId = ref('');
 const isRecording = ref(false);
 
 const send = async () => {
-  //发送文件
+  //发送文字，文件
   if(fileDigest.value !== ''){
     ws.sendMessage({
       chatId: useCurrentChatStore().currentChat.chatId,
       sender: useMeStore().userInfo.userId,
       receiver: useCurrentChatStore().currentChat.toId,
       type: 3,
-      file: fileDigest.value,
+      text: text.value.length > 0 ? text.value:null,
+      file: fileList.value.length > 0?fileDigest.value:null,
       replyStatus: isReply.value?1:0,
       replyMessageId: isReply.value ? replyMessageId.value : null,
       authorization: localStorage.getItem("Authorization")
@@ -49,6 +51,15 @@ const send = async () => {
       authorization: localStorage.getItem("Authorization")
     })
   }
+  text.value = '';
+  imageList.value = [];
+  videoList.value = [];
+  fileList.value = [];
+  imageDigest.value = [];
+  fileDigest.value = '';
+  videoDigest.value = '';
+  isReply.value = false;
+  replyMessageId.value = '';
 };
 
 const record = () =>{
@@ -86,20 +97,16 @@ const handlePreview = async file => {
   previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
 };
 
-const beforeImageUpload = async (file) =>{
-  console.log("上传照片：" + await digest(file));
-  //将文件列表清空，因为文件和视频图片不能同时上传。
-  fileList.value = [];
-}
-
-const getImageListDigest = () => {
+const getImageListDigest = (file) => {
   imageList.value.map(async (image) => {
     imageDigest.value.push(await digest(image) + '.' + getFileExtension(image.name));
   });
+  fileList.value = [];
+  fileDigest.value = '';
 }
 
 const beforeVideoUpload = async (file) =>{
-  videoDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  videoDigest.value = await digest(videoList.value[0]) + '.' + getFileExtension(file.name);
   console.log("上传视频：" + videoDigest.value);
   //将文件列表清空，因为文件和视频图片不能同时上传。
   fileList.value = [];
@@ -107,7 +114,7 @@ const beforeVideoUpload = async (file) =>{
 }
 
 const beforeFileUpload = async (file)=>{
-  fileDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  fileDigest.value = await digest(fileList.value[0]) + '.' + getFileExtension(file.name);
   console.log("上传文件：" + fileDigest.value);
   //将图片和视频列表清空，因为文件和视频图片不能同时上传。
   imageList.value = [];
@@ -128,80 +135,48 @@ const getFileExtension = (name)=> {
   return /\.([^\.]+)$/.exec(name)[1];
 }
 
-const messages = ref([
-  {sender:'10015',
-    type:2,
-    text:'你好',
-    images:[],
-    video: '',
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10016',
-    type:2,
-    text:'哈哈哈哈哈',
-    images:[],
-    video: '',
-    file: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10015',
-    type:2,
-    text:'你好',
-    images:[],
-    video: '',
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10016',
-    type:2,
-    text:'我的天哪',
-    video: '',
-    images: [],
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10016',
-    type:2,
-    text:'你还好吗',
-    images:[],
-    video: '',
-    file: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10015',
-    type:2,
-    text:'我去',
-    images:[],
-    video: '',
-    audio: '',
-    replyStatus: 0
-  },
-  {
-    sender:'10015',
-    type:2,
-    text:'牛逼',
-    images:[],
-    video: '',
-    file: '',
-    replyStatus: 0
+const messages = ref([]);
+let messageInterval = null;
+const startShowMessage = () => {
+  if(messageInterval !== null){
+    clearInterval(messageInterval);
   }
-]);
+  messageInterval = setInterval(() => {
+    const messageArray = usePrivateChatStore().privateChats.get(useCurrentChatStore().currentChat.chatId);
+    if(messageArray !== undefined) {
+      messages.value = messageArray;
+    }
+  }, 10);
+}
+startShowMessage();
+
+const messageContainer = ref(null);
+onMounted(() => {
+  nextTick(() => {
+    scrollToBottom();
+  });
+});
+
+watch(
+    () => messages.value.length,
+    (newLength, oldLength) => {
+      nextTick(() => {
+        scrollToBottom();
+      });
+    }
+);
+
+function scrollToBottom() {
+  if (messageContainer.value) {
+    messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
+  }
+}
 </script>
 
 <template>
   <div class="area-container">
 
-      <div class="messages-area">
+      <div class="messages-area" ref="messageContainer">
         <div v-for="msg in messages">
           <Message :message="msg"></Message>
         </div>
@@ -221,7 +196,7 @@ const messages = ref([
                       <a-upload
                           v-model:file-list="imageList"
                           action="/api/file/image/upload"
-                          :before-upload="beforeImageUpload"
+                          :before-upload="getImageListDigest"
                           list-type="picture-card"
                           @preview="handlePreview"
                           :accept="'image/png,image/jpeg,image/jpg,image/gif'"

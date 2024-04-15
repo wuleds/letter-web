@@ -81,10 +81,10 @@ export const messageDBOps = {
         });
     },
 
-    async getMessagesInDB(storeName) {
-        const db = await this.openDB(storeName);
-        const transaction = db.transaction([storeName], 'readonly');
-        const store = transaction.objectStore(storeName);
+    async getMessagesInDB(chatId) {
+        const db = await this.openDB(chatId);
+        const transaction = db.transaction([chatId], 'readonly');
+        const store = transaction.objectStore(chatId);
         return new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onsuccess = () => resolve(request.result);
