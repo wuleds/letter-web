@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
-import {getContactList} from "@/js/contact/Contact.js";
+import {getContactList} from "@/js/main/contact/Contact.js";
 import ContactCard from "@/components/main/contact/card/ContactCard.vue";
 //String contactId;   //账号
 //String contactName; //用户名

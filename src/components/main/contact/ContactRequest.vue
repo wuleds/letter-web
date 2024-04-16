@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
-import {getRequestList} from "@/js/contact/Contact.js";
+import {getRequestList} from "@/js/main/contact/Contact.js";
 import ContactCard from "@/components/main/contact/card/RequestCard.vue";
 import RequestCard from "@/components/main/contact/card/RequestCard.vue";
 

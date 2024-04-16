@@ -37,6 +37,9 @@ export const useChatListStore = defineStore('chatListData',()=>{
 
     /**添加对话*/
     async function addConversation(conversation) {
+        if(chatList.value.has(conversation.chatId)){
+            return;
+        }
         chatList.value.set(conversation.chatId,conversation);
         await chatListDbOps.insertItem(conversation);
     }

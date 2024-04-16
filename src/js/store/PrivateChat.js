@@ -14,7 +14,9 @@ export const usePrivateChatStore = defineStore('privateChat',()=> {
 
     //添加一个新的私聊存储
     const addPrivateChat = (chatId) => {
-        privateChats.value.set(chatId, []);
+        if (!privateChats.value.has(chatId)) {
+            privateChats.value.set(chatId, []);
+        }
     }
 
     //往现有的私聊存储里添加新的信息

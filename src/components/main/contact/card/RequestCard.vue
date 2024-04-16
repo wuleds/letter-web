@@ -1,6 +1,6 @@
 <script setup>
 import {reactive, ref} from "vue";
-import {handleContactRequest} from "@/js/contact/Contact.js";
+import {handleContactRequest} from "@/js/main/contact/Contact.js";
 const props = defineProps(['request']);
 const request = ref(props.request);
 

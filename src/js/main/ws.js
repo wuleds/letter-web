@@ -10,7 +10,10 @@ export class WebSocketClient {
     static instance = null; // 单例
     ws = null; // WebSocket 实例
     currentUrl = window.location.host;
-    WS_URL = `ws://${this.currentUrl}/link`;
+    protocol = import.meta.env.PROD
+            ? import.meta.env.VITE_WSS
+            : import.meta.env.VITE_WS
+    WS_URL = `${this.protocol}${this.currentUrl}/link`;
     pingInterval = null; // 心跳包定时器
     reconnectTimeout = null; // 重连定时器
     linkState = true;
@@ -181,7 +184,6 @@ export class WebSocketClient {
         });
         //初始化本地最新消息
         useUnreadCountStore().initLastMessage(chatArray);
-        console.log(chatArray)
         //初始化未读消息数
         useUnreadCountStore().initUnread(chatArray);
 
@@ -200,7 +202,7 @@ export class WebSocketClient {
                 const last = {
                     chatId: 'server',
                     type: '20',
-                    text: JSON.stringify(lastMessageArray),
+                    text: lastMessageArray.length > 0 ? JSON.stringify(lastMessageArray) : '',
                     sender: useMeStore().userInfo.userId,
                     receiver: 'server',
                     authorization: localStorage.getItem('Authorization')

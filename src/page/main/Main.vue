@@ -5,6 +5,10 @@
       <Contact @close="showContact"></Contact>
     </div>
 
+    <div class="group" v-if="group_status">
+      <Group @close="showGroup"></Group>
+    </div>
+
 
     <div class="left">
     <div class="warp">
@@ -32,7 +36,7 @@
             <div class="text">联系人</div>
           </div>
 
-          <div class="menu-item">
+          <div class="menu-item" @click="showGroup">
             <div class="menu-item-icon">
               <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-qunzu"></use>
@@ -85,15 +89,21 @@ import logout from "/src/js/main/logout/logout.js";
 import {useMeStore} from "@/js/store/Me.js";
 import {useChatListStore} from "@/js/store/ChatListData.js";
 import {WebSocketClient} from "@/js/main/ws.js";
+import Group from "@/components/main/Group.vue";
 import("/src/js/icon/iconfont.js")
 //与服务器进行websocket连接
 const ws = WebSocketClient.getInstance();
 
-let contact_status = ref(false);
+const contact_status = ref(false);
+const group_status = ref(false);
 //初始化对话列表
 useChatListStore().initialize();
 const showContact = ()=>{
   contact_status.value = !contact_status.value;
+}
+
+const showGroup = ()=>{
+  group_status.value = !group_status.value;
 }
 
 const myId = ref(useMeStore().userInfo.userName);
@@ -101,6 +111,14 @@ const myId = ref(useMeStore().userInfo.userName);
 
 <style scoped>
 .contact{
+  height: 90%;
+  width: 30%;
+  left: 35%;
+  z-index: 1;
+  position: absolute;
+}
+
+.group{
   height: 90%;
   width: 30%;
   left: 35%;

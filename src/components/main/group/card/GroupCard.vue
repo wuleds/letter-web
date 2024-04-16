@@ -1,12 +1,12 @@
 <script setup>
 import { ref} from "vue";
-import {deleteContact} from "@/js/main/contact/Contact.js";
 import {createConversation} from "@/js/main/chatList/ChatList.js";
 import {getPath} from "@/js/main/message/PathController.js";
-const props = defineProps(['contact']);
-const contact = ref(props.contact);
+import {quitGroup} from "@/js/main/group/Group.js";
+const props = defineProps(['group']);
+const group = ref(props.group);
 const show =ref(true);
-const modalText = ref('确定删除该联系人吗?');
+const modalText = ref('确定退出群组吗?');
 const open = ref(false);
 const confirmLoading = ref(false);
 const showModal = () => {
@@ -18,7 +18,7 @@ const handleOk = async () => {
     open.value = false;
     confirmLoading.value = false;
   }, 1000);
-  show.value = !await deleteContact(contact.value.contactId);
+  show.value = !await quitGroup(group.value.groupId);
 };
 
 const emits = defineEmits(['close']);
@@ -30,25 +30,25 @@ const close = () => {
 <template>
   <a-card :body-style="{ padding: 0, overflow: 'hidden' }" style="margin-bottom: 1%;border-radius: 5px">
 
-    <div class="contact-list-card">
+    <div class="group-list-card">
 
-      <div class="contact-list-card-photo">
+      <div class="group-list-card-photo">
         <a-avatar size="large">
-          <template #icon><img :src="getPath(contact.contactPhoto)" alt="头像"></template>
+          <template #icon><img :src="getPath(group.groupPhoto)" alt="头像"></template>
         </a-avatar>
       </div>
 
-      <div class="contact-list-card-user-data">
-        <div class="contact-list-card-user-name">名字：{{ contact.contactName }}</div>
-        <div class="contact-list-card-user-name">账号：{{contact.contactId}}</div>
+      <div class="group-list-card-user-data">
+        <div class="group-list-card-user-name">{{ group.groupName }}</div>
+        <div class="group-list-card-user-name">{{group.groupId}}</div>
       </div>
 
-      <div class="contact-list-card-user-btn" v-if="show">
-<!--        删除联系人-->
-        <div class="contact-list-card-user-btn-1" @click="showModal">
+      <div class="group-list-card-user-btn" v-if="show">
+        <!--        退出群组-->
+        <div class="group-list-card-user-btn-1" @click="showModal">
 
-          <div class="contact-list-menu-icon">
-            <svg class="contact-list-icon" aria-hidden="true">
+          <div class="group-list-menu-icon">
+            <svg class="group-list-icon" aria-hidden="true">
               <use xlink:href="#icon-lajitong-copy"></use>
             </svg>
           </div>
@@ -58,11 +58,11 @@ const close = () => {
           </a-modal>
 
         </div>
-<!--        启动对话-->
-        <div class="contact-list-card-user-btn-2" @click="close();createConversation('private',contact.contactId)">
+        <!--        启动对话-->
+        <div class="group-list-card-user-btn-2" @click="close();createConversation('group',group.groupId)">
 
-          <div class="contact-list-menu-icon">
-            <svg class="contact-list-icon" aria-hidden="true">
+          <div class="group-list-menu-icon">
+            <svg class="group-list-icon" aria-hidden="true">
               <use xlink:href="#icon-fayan"></use>
             </svg>
           </div>
@@ -70,29 +70,29 @@ const close = () => {
         </div>
       </div>
 
-      <div class="contact-list-card-user-btn" v-if="!show">
-        联系人已删除
+      <div class="group-list-card-user-btn" v-if="!show">
+        已退出群组
       </div>
     </div>
   </a-card>
 </template>
 
 <style scoped>
-.contact-list-card {
+.group-list-card {
   display: flex;
   cursor: pointer;
   height: 7em;
   width: 100%;
 }
 
-.contact-list-card-photo {
+.group-list-card-photo {
   height: 100%;
   width: 10%;
   padding: 15px;
   margin: 0;
 }
 
-.contact-list-card-user-data {
+.group-list-card-user-data {
   padding-right: 30%;
   flex-grow: 1;
   height: 100%;
@@ -102,12 +102,12 @@ const close = () => {
   font-size: 16px;
 }
 
-.contact-list-card-user-name {
+.group-list-card-user-name {
   font-weight: bold;
 }
 
 
-.contact-list-menu-icon{
+.group-list-menu-icon{
   width: 50px;
   height: 50px;
   font-size: 25px;
@@ -119,7 +119,7 @@ const close = () => {
 }
 
 
-.contact-list-icon {
+.group-list-icon {
   width: 1em;
   height: 1em;
   vertical-align: -0.15em;
@@ -128,7 +128,7 @@ const close = () => {
 }
 
 
-.contact-list-card-user-btn{
+.group-list-card-user-btn{
   height: 100%;
   width: 30%;
   display: flex;
@@ -143,7 +143,7 @@ const close = () => {
   border-radius: 5px;
 }
 
-.contact-list-card-user-btn-2{
+.group-list-card-user-btn-2{
   height: 50%;
   width: 100%;
   display: flex;
@@ -152,11 +152,11 @@ const close = () => {
   border-radius: 5px;
 }
 
-.contact-list-card-user-btn-2:hover{
+.group-list-card-user-btn-2:hover{
   background-color: #f0f0f0;
 }
 
-.contact-list-card-user-btn-1{
+.group-list-card-user-btn-1{
   border-radius: 5px;
   height: 50%;
   width: 100%;
@@ -165,7 +165,7 @@ const close = () => {
   align-items: center;
 }
 
-.contact-list-card-user-btn-1:hover{
+.group-list-card-user-btn-1:hover{
   background-color: #f0f0f0;
 }
 </style>

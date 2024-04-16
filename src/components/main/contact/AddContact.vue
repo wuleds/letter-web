@@ -1,5 +1,5 @@
 <script setup>
-import {searchContact, sendContactRequest} from "@/js/contact/Contact.js";
+import {searchContact, sendContactRequest} from "@/js/main/contact/Contact.js";
 import { ref} from "vue";
 import {useMeStore} from "@/js/store/Me.js";
 const emit = defineEmits(['close']);
