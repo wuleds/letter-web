@@ -29,4 +29,3 @@ coverage
 
 *.tsbuildinfo
 Dockerfile
-default.conf
