@@ -24,18 +24,19 @@ const isRecording = ref(false);
 
 const send = async () => {
   //发送文字，文件
-  if(fileDigest.value !== ''){
+  if(fileDigest.value !== '' && fileDigest.value !== null && fileDigest.value !== undefined){
     ws.sendMessage({
       chatId: useCurrentChatStore().currentChat.chatId,
       sender: useMeStore().userInfo.userId,
       receiver: useCurrentChatStore().currentChat.toId,
       type: 3,
       text: text.value.length > 0 ? text.value:null,
-      file: fileList.value.length > 0?fileDigest.value:null,
+      file: fileDigest.value,
       replyStatus: isReply.value?1:0,
       replyMessageId: isReply.value ? replyMessageId.value : null,
       authorization: localStorage.getItem("Authorization")
     });
+    console.log("发送文件：" + fileDigest.value)
   }else {
     //发送文字，图片，视频
     ws.sendMessage({
@@ -44,22 +45,23 @@ const send = async () => {
       receiver: useCurrentChatStore().currentChat.toId,
       type: 2,
       text: text.value.length > 0?text.value:null,
-      images: imageDigest.value.length > 0?imageDigest.value:null,
-      video: videoDigest.value.length > 0?videoDigest.value:null,
+      images: imageDigest.value.length > 0 ? JSON.stringify(imageDigest.value) : null,
+      video: videoDigest.value !== null &&videoDigest.value.length > 0 ? videoDigest.value : null,
       replyStatus: isReply.value?1:0,
       replyMessageId: isReply.value ? replyMessageId.value : null,
       authorization: localStorage.getItem("Authorization")
     })
+    console.log("发送图片：" + imageDigest.value)
   }
   text.value = '';
   imageList.value = [];
   videoList.value = [];
   fileList.value = [];
   imageDigest.value = [];
-  fileDigest.value = '';
-  videoDigest.value = '';
+  fileDigest.value = null;
+  videoDigest.value = null;
   isReply.value = false;
-  replyMessageId.value = '';
+  replyMessageId.value = null;
 };
 
 const record = () =>{
@@ -97,29 +99,29 @@ const handlePreview = async file => {
   previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
 };
 
-const getImageListDigest = (file) => {
-  imageList.value.map(async (image) => {
-    imageDigest.value.push(await digest(image) + '.' + getFileExtension(image.name));
-  });
+const getImageListDigest = async (file) => {
+  imageDigest.value.push(await digest(file) + '.' + getFileExtension(file.name));
   fileList.value = [];
-  fileDigest.value = '';
+  fileDigest.value = null;
+  console.log("上传了图片：" + imageDigest.value)
 }
 
-const beforeVideoUpload = async (file) =>{
-  videoDigest.value = await digest(videoList.value[0]) + '.' + getFileExtension(file.name);
-  console.log("上传视频：" + videoDigest.value);
+const getVideoListDigest = async (file) =>{
   //将文件列表清空，因为文件和视频图片不能同时上传。
   fileList.value = [];
-  fileDigest.value = '';
+  fileDigest.value = null;
+  videoDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  console.log("上传了视频：" + videoDigest.value)
 }
 
-const beforeFileUpload = async (file)=>{
-  fileDigest.value = await digest(fileList.value[0]) + '.' + getFileExtension(file.name);
-  console.log("上传文件：" + fileDigest.value);
+const getFileListDigest = async (file)=>{
   //将图片和视频列表清空，因为文件和视频图片不能同时上传。
   imageList.value = [];
+  imageDigest.value = [];
   videoList.value = [];
-  videoDigest.value = '';
+  videoDigest.value = null;
+  fileDigest.value = await digest(file) + '.' + getFileExtension(file.name);
+  console.log("上传文件：" + fileDigest.value);
 }
 
 const digest = async (file)=>{
@@ -196,12 +198,13 @@ function scrollToBottom() {
                       <a-upload
                           v-model:file-list="imageList"
                           action="/api/file/image/upload"
-                          :before-upload="getImageListDigest"
                           list-type="picture-card"
                           @preview="handlePreview"
+                          :before-upload="getImageListDigest"
+                          @remove=" (file)=>{imageDigest.value = imageDigest.value.filter(async (item) => item !== await digest(file) + '.' + getFileExtension(file.name));}"
                           :accept="'image/png,image/jpeg,image/jpg,image/gif'"
                           :max-count="3"
-                          onchange=""
+
                       >
                         <div v-if="imageList.length < 3">
                           <div style="margin-top: 8px">上传</div>
@@ -222,9 +225,10 @@ function scrollToBottom() {
                           v-model:file-list="videoList"
                           list-type="picture-card"
                           action="/api/file/video/upload"
-                          :before-upload="beforeVideoUpload"
                           :accept="'video/mp4,video/avi'"
                           :max-count="1"
+                          @remove="()=>{videoDigest.value = null}"
+                          :before-upload="getVideoListDigest"
                       >
                           上传
                       </a-upload>
@@ -241,7 +245,8 @@ function scrollToBottom() {
                           list-type="picture-card"
                           action="/api/file/file/upload"
                           :max-count="1"
-                          :before-upload="beforeFileUpload"
+                          :before-upload="getFileListDigest"
+                          @remove="()=>{fileDigest.value = null}"
                       >
                         上传
                       </a-upload>

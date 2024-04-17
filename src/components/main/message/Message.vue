@@ -10,6 +10,11 @@ const isMe = ref(message.value.senderId === useMeStore().userInfo.userId);
 const exist = (item) => {
   return item !== undefined && item !== null && item !== '' && item.length > 0;
 };
+
+if(exist(message.value.image)){
+  message.value.image = JSON.parse(message.value.image);
+}
+
 </script>
 
 <template>
@@ -24,13 +29,13 @@ const exist = (item) => {
       <!-- 图片消息 -->
       <div v-if="message.type === '2' && exist(message.image)">
         <a-image-preview-group>
-          <a-image v-for="img in message.images" :width="200" :src="getPath(img)"/>
+          <a-image v-for="img in message.image" :width="200" :src="getPath(img)"/>
         </a-image-preview-group>
       </div>
 
       <!-- 视频消息 -->
       <div v-if="message.type === '2' && exist(message.video)">
-        <video :src="message.video" controls></video>
+        <video :src="getPath(message.video)" controls></video>
       </div>
 
       <!-- 文件消息 -->

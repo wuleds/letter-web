@@ -1,5 +1,5 @@
 <script setup>
-import { ref} from "vue";
+import { ref } from "vue";
 import {createConversation} from "@/js/main/chatList/ChatList.js";
 import {getPath} from "@/js/main/message/PathController.js";
 import {quitGroup} from "@/js/main/group/Group.js";
@@ -40,7 +40,7 @@ const close = () => {
 
       <div class="group-list-card-user-data">
         <div class="group-list-card-user-name">{{ group.groupName }}</div>
-        <div class="group-list-card-user-name">{{group.groupId}}</div>
+        <div class="group-list-card-user-name">{{group.info}}</div>
       </div>
 
       <div class="group-list-card-user-btn" v-if="show">

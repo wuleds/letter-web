@@ -30,3 +30,21 @@ export async function quitGroup(groupId) {
         return false;
     })
 }
+
+export async function searchGroup(groupId) {
+    return await Request({
+        url: '/group/info',
+        method: 'post',
+        data: {
+            group: groupId
+        }
+    }).then(res => {
+        if (res.data.code === '200') {
+            return JSON.parse(res.data.data);
+        } else if (res.data.code === '400') {
+            openNotification('错误', res.data.msg);
+        }
+        return null;
+    })
+
+}
