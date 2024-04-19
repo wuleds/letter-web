@@ -1,11 +1,12 @@
 <script setup>
-import {computed, nextTick, onMounted, ref, watch} from "vue";
+import {nextTick, onMounted, reactive, ref, watch} from "vue";
 import {WebSocketClient} from "@/js/main/ws.js";
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
 import Voice from "@/components/main/voice/Record.vue";
 import {useMeStore} from "@/js/store/Me.js";
 import Message from "@/components/main/message/Message.vue";
 import {usePrivateChatStore} from "@/js/store/PrivateChat.js";
+import {messageDBOps} from "@/js/db/MessageDB.js";
 const ws = WebSocketClient.getInstance();
 
 //文本
@@ -137,16 +138,27 @@ const getFileExtension = (name)=> {
   return /\.([^\.]+)$/.exec(name)[1];
 }
 
-const messages = ref([]);
+const chats = reactive(new Map());
+
 let messageInterval = null;
 const startShowMessage = () => {
   if(messageInterval !== null){
     clearInterval(messageInterval);
   }
-  messageInterval = setInterval(() => {
-    const messageArray = usePrivateChatStore().privateChats.get(useCurrentChatStore().currentChat.chatId);
-    if(messageArray !== undefined) {
-      messages.value = messageArray;
+  messageInterval = setInterval(async () => {
+    let messageArray;
+    let type = useCurrentChatStore().currentChat.type;
+    let chatId = useCurrentChatStore().currentChat.chatId;
+    if(type === 'private') {
+      messageArray = usePrivateChatStore().privateChats.get(chatId);
+    }else if(type === 'group' || 'channel'){
+      messageArray = await messageDBOps.getMessagesInDB(chatId);
+    }
+    if(messageArray !== null && messageArray !== undefined){
+      chats.set(chatId, messageArray);
+      await nextTick(() => {
+        scrollToBottom();
+      });
     }
   }, 10);
 }
@@ -159,14 +171,6 @@ onMounted(() => {
   });
 });
 
-watch(
-    () => messages.value.length,
-    (newLength, oldLength) => {
-      nextTick(() => {
-        scrollToBottom();
-      });
-    }
-);
 
 function scrollToBottom() {
   if (messageContainer.value) {
@@ -178,9 +182,11 @@ function scrollToBottom() {
 <template>
   <div class="area-container">
 
-      <div class="messages-area" ref="messageContainer">
-        <div v-for="msg in messages">
-          <Message :message="msg"></Message>
+      <div class="messages-area"  v-if="chats">
+        <div v-for="messages in chats" ref="messageContainer">
+          <div v-for="msg in messages[1]" :key="msg.messageId" v-if="messages[0] === useCurrentChatStore().currentChat.chatId" >
+            <Message :message="msg"></Message>
+          </div>
         </div>
 
       </div>
@@ -204,7 +210,6 @@ function scrollToBottom() {
                           @remove=" (file)=>{imageDigest.value = imageDigest.value.filter(async (item) => item !== await digest(file) + '.' + getFileExtension(file.name));}"
                           :accept="'image/png,image/jpeg,image/jpg,image/gif'"
                           :max-count="3"
-
                       >
                         <div v-if="imageList.length < 3">
                           <div style="margin-top: 8px">上传</div>

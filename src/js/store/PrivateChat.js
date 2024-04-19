@@ -1,9 +1,6 @@
 //存储私聊消息
-import {reactive, ref} from "vue";
+import {ref} from "vue";
 import {defineStore} from "pinia";
-import Request from "@/utils/Request.js";
-import {openNotification} from "@/js/Notify/Notify.js";
-import {chatListDbOps} from "@/js/db/ChatListDB.js";
 
 export const usePrivateChatStore = defineStore('privateChat',()=> {
     const privateChats = ref(new Map());
@@ -32,10 +29,21 @@ export const usePrivateChatStore = defineStore('privateChat',()=> {
         privateChats.value.set(chatId, privateChat);
     }
 
+
+    const getNewMessages = (chatId, lastMessageId) => {
+        //从privateChats中获取新的消息
+        const chat = getCurrentPrivateChat(chatId);
+        if (chat === undefined) {
+            return [];
+        }
+        return chat.filter(message => message.messageId > lastMessageId);
+    }
+
     return {
         privateChats,
         getCurrentPrivateChat,
         addPrivateChat,
-        insertMessages
+        insertMessages,
+        getNewMessages
     }
 })

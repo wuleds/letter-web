@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useMeStore} from "@/js/store/Me.js";
 import {getPath} from "@/js/main/message/PathController.js";
 
@@ -11,9 +11,7 @@ const exist = (item) => {
   return item !== undefined && item !== null && item !== '' && item.length > 0;
 };
 
-if(exist(message.value.image)){
-  message.value.image = JSON.parse(message.value.image);
-}
+
 
 </script>
 
@@ -29,7 +27,7 @@ if(exist(message.value.image)){
       <!-- 图片消息 -->
       <div v-if="message.type === '2' && exist(message.image)">
         <a-image-preview-group>
-          <a-image v-for="img in message.image" :width="200" :src="getPath(img)"/>
+          <a-image v-for="img in JSON.parse(message.image)" :height="200" :src="getPath(img)"/>
         </a-image-preview-group>
       </div>
 

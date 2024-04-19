@@ -34,7 +34,7 @@ const close = () => {
 
       <div class="contact-list-card-photo">
         <a-avatar size="large">
-          <template #icon><img :src="getPath(contact.contactPhoto)" alt="头像"></template>
+          <template #icon><img :src="getPath(contact.contactId + '.jpg')" alt="头像"></template>
         </a-avatar>
       </div>
 

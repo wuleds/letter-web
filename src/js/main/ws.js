@@ -93,7 +93,7 @@ export class WebSocketClient {
             //将消息存入数据库
             if(unreadMessagesList === null || unreadMessagesList === undefined || unreadMessagesList.length === 0) {
                 console.log('没有收到新消息');
-            }else if(chatType === 'group' && chatType === 'channel') {
+            }else if(chatType === 'group' || chatType === 'channel') {
                 //群组和频道消息存入数据库,并设置本地最新消息
                 messageDBOps.insertItems(chatId,unreadMessagesList).then(() => {});
                 useUnreadCountStore().updateLastMessageId(chatId);
@@ -202,7 +202,7 @@ export class WebSocketClient {
                 const last = {
                     chatId: 'server',
                     type: '20',
-                    text: lastMessageArray.length > 0 ? JSON.stringify(lastMessageArray) : '',
+                    text:  JSON.stringify(lastMessageArray),
                     sender: useMeStore().userInfo.userId,
                     receiver: 'server',
                     authorization: localStorage.getItem('Authorization')
@@ -218,16 +218,16 @@ export class WebSocketClient {
             clearInterval(this.unreadMessageInterval);
         }
         this.unreadCountInterval = setInterval(() => {
-            const chatId = useCurrentChatStore().currentChat.chatId;
-            const text = useUnreadCountStore().lastMessage.get(chatId) || null
-            const request = {
+            let chatId = useCurrentChatStore().currentChat.chatId;
+            let text = useUnreadCountStore().lastMessage.get(chatId) || 0
+            let request = {
                 chatId: chatId,
                 type: '21',
                 text: text !== null ? text  : '0',
                 sender: useMeStore().userInfo.userId,
                 receiver: 'server',
                 authorization: localStorage.getItem('Authorization')
-            }
+            };
             this.sendMessage(request);
         },1000) //每1秒获取一次未读消息
 

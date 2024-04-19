@@ -82,6 +82,7 @@ const showAddContact = ()=>{
 .btn{
   color: rgb(22,138,205);
   cursor: pointer;
+  margin-left: 20px;
 }
 .btn:hover{
   background-color: rgb(227,241,250);

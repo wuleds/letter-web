@@ -8,6 +8,7 @@ import ContactCard from "@/components/main/contact/card/ContactCard.vue";
 const contactList = ref();
 onMounted(async () => {
   contactList.value = await getContactList();
+  console.log(contactList.value);
 });
 
 const emits = defineEmits(['close']);

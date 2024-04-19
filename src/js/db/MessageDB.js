@@ -92,6 +92,27 @@ export const messageDBOps = {
         });
     },
 
+    async getNewMessagesInDB(chatId, messageId) {
+        //获取大于messageId的消息
+        const db = await this.openDB(chatId);
+        const transaction = db.transaction([chatId], 'readonly');
+        const store = transaction.objectStore(chatId);
+        return new Promise((resolve, reject) => {
+            const request = store.openCursor(IDBKeyRange.lowerBound(messageId, true));
+            const messages = [];
+            request.onsuccess = () => {
+                const cursor = request.result;
+                if (cursor) {
+                    messages.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    resolve(messages);
+                }
+            };
+            request.onerror = () => reject(request.error);
+        });
+    },
+
     //获取最后一条消息的id
     async getLastMessageIdInDB(storeName) {
         const db = await this.openDB(storeName);

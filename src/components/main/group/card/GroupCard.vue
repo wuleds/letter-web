@@ -40,7 +40,7 @@ const close = () => {
 
       <div class="group-list-card-user-data">
         <div class="group-list-card-user-name">{{ group.groupName }}</div>
-        <div class="group-list-card-user-name">{{group.info}}</div>
+        <div class="group-list-card-user-name">{{group.groupInfo}}</div>
       </div>
 
       <div class="group-list-card-user-btn" v-if="show">

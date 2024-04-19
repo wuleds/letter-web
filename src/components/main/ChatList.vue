@@ -8,10 +8,6 @@ const searchValue = ref('');
 
 const unreadCount = computed(()=>useUnreadCountStore().unreadCounts);
 const chatList = computed(()=>useChatListStore().chatList);
-const onSearch = (searchValue) => {
-  //TODO 参数为用户输入的值，使用此值进行搜索
-  console.log('use value', searchValue);
-};
 const cardStyle = {
   width: '100%',
   height: '100%',
@@ -39,11 +35,6 @@ const deleteChat = (chat) => {
 
 <template>
   <div class="chatList-container">
-    <div style="display: flex">
-      <a-input v-model:value="searchValue" size="large" placeholder="搜索联系人，群组或频道" />
-      <button>搜索</button>
-    </div>
-
     <ul v-if="chatList!== undefined && chatList !== null">
       <li v-for="value in chatList"  >
             <a-card :style="cardStyle" :body-style="{ padding: 0, overflow: 'hidden' }" :class="{'isCurrent':isCurrent(value.at(1).chatId)}" >

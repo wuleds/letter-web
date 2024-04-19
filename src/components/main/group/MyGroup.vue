@@ -1,7 +1,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {getGroupList} from "@/js/main/group/Group.js";
-import ContactCard from "@/components/main/contact/card/ContactCard.vue";
 import GroupCard from "@/components/main/group/card/GroupCard.vue";
 
 /**
@@ -25,7 +24,7 @@ onMounted(async () => {
   <div class="group-list-container">
 
     <div v-if="groupList !== null || undefined" class="group-list-contact" v-for="group in groupList" :key="group.groupId">
-      <GroupCard :contact="group" @close="close"></GroupCard>
+      <GroupCard :group="group"></GroupCard>
     </div>
 
     <div v-if="groupList === null || undefined" style="margin-top: 10%">
