@@ -2,9 +2,8 @@
 import {useChatListStore} from "@/js/store/ChatListData.js";
 import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
 import {useUnreadCountStore} from "@/js/store/UnreadCount.js";
-import {computed, ref} from 'vue';
+import {computed} from 'vue';
 import {getPath} from "@/js/main/message/PathController.js";
-const searchValue = ref('');
 
 const unreadCount = computed(()=>useUnreadCountStore().unreadCounts);
 const chatList = computed(()=>useChatListStore().chatList);
@@ -23,7 +22,9 @@ const changeObject = (chat) => {
   useCurrentChatStore().setCurrentChat({
     chatId: chat.chatId,
     toId: chat.toId,
-    type: chat.type
+    type: chat.type,
+    name: chat.name,
+    photo: chat.photo
   });
 };
 
@@ -42,7 +43,7 @@ const deleteChat = (chat) => {
                   <div class="contact-photo">
                         <a-badge :count="unreadCount.get(value.at(1).chatId)" :overflow-count="999">
                           <a-avatar size="large">
-                            <template #icon><img :src="getPath(value.at(1).toId + '.jpg')" alt="头像"></template>
+                            <template #icon><img :src="getPath(value.at(1).photo)" alt="头像"></template>
                           </a-avatar>
                         </a-badge>
                   </div>
@@ -50,7 +51,7 @@ const deleteChat = (chat) => {
                   <div class="contact-data">
 
                     <div class="contact-name">
-                      <a>{{value.at(1).toId}}</a>
+                      <a>{{value.at(1).name}}</a>
                       <div class="delete-btn" @click="deleteChat(value.at(1))">
                         <svg class="chat-icon" aria-hidden="true">
                           <use xlink:href="#icon-chacha"></use>

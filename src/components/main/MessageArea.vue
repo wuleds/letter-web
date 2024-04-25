@@ -139,6 +139,7 @@ const getFileExtension = (name)=> {
 }
 
 const chats = reactive(new Map());
+let i = true
 
 let messageInterval = null;
 const startShowMessage = () => {
@@ -155,10 +156,13 @@ const startShowMessage = () => {
       messageArray = await messageDBOps.getMessagesInDB(chatId);
     }
     if(messageArray !== null && messageArray !== undefined){
+      const array = chats.get(chatId);
       chats.set(chatId, messageArray);
-      await nextTick(() => {
-        scrollToBottom();
-      });
+      if(array !== undefined && array !== null && array.length !== messageArray.length){
+        await nextTick(() => {
+          scrollToBottom();
+        });
+      }
     }
   }, 10);
 }
@@ -182,8 +186,8 @@ function scrollToBottom() {
 <template>
   <div class="area-container">
 
-      <div class="messages-area"  v-if="chats">
-        <div v-for="messages in chats" ref="messageContainer">
+      <div class="messages-area"  v-if="chats"  ref="messageContainer" >
+        <div v-for="messages in chats" >
           <div v-for="msg in messages[1]" :key="msg.messageId" v-if="messages[0] === useCurrentChatStore().currentChat.chatId" >
             <Message :message="msg"></Message>
           </div>
@@ -293,7 +297,7 @@ function scrollToBottom() {
 
           <div class="message-area-btn">
 
-            <a-popover v-model:open="visible" placement="leftBottom" title="录音" trigger="click">
+<!--            <a-popover v-model:open="visible" placement="leftBottom" title="录音" trigger="click">
               <template #content>
                 <Voice :isRply="isReply" :replyMessageId="replyMessageId"/>
               </template>
@@ -302,9 +306,9 @@ function scrollToBottom() {
                   <use xlink:href="#icon-maikefeng1-copy"></use>
                 </svg>
               </a-button>
-            </a-popover>
+            </a-popover>-->
 
-            <a-button class="not-btn" @click="send" v-if="text.length > 0">
+            <a-button class="not-btn" @click="send">
               <svg class="mes-icon" aria-hidden="true">
                 <use xlink:href="#icon-fasong-mianxing"></use>
               </svg>

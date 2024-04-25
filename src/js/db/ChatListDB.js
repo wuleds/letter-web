@@ -25,7 +25,14 @@ export const chatListDbOps = {
         const store = transaction.objectStore(STORE_NAME);
         return new Promise((resolve, reject) => {
             items.forEach(item => {
-                const request = store.add({chatId: item.chatId, type: item.type, myId: item.myId, toId: item.toId});
+                const request = store.add({
+                    chatId: item.chatId,
+                    type: item.type,
+                    myId: item.myId,
+                    toId: item.toId,
+                    name: item.name,
+                    photo: item.photo
+                });
                 request.onerror = () => reject(request.error);
             });
             transaction.oncomplete = () => resolve();

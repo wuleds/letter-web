@@ -7,16 +7,22 @@ export const useCurrentChatStore = defineStore('currentChat',()=>{
         //私聊private，群组group，频道channel
         type: localStorage.getItem('CurrentChatType') || '',
         chatId: localStorage.getItem('CurrentChatId') || '',
-        toId: localStorage.getItem('CurrentToId') || ''
+        toId: localStorage.getItem('CurrentToId') || '',
+        name:localStorage.getItem('CurrentChatName') || '',
+        photo:localStorage.getItem('CurrentChatPhoto') || ''
     });
 
     function setCurrentChat(data){
         currentChat.type = data.type;
         currentChat.chatId = data.chatId;
         currentChat.toId = data.toId;
+        currentChat.name = data.name;
+        currentChat.photo = data.photo;
         localStorage.setItem('CurrentChatType',currentChat.type);
         localStorage.setItem('CurrentChatId',currentChat.chatId);
         localStorage.setItem('CurrentToId',currentChat.toId);
+        localStorage.setItem('CurrentChatName',currentChat.name);
+        localStorage.setItem('CurrentChatPhoto',currentChat.photo);
     }
 
     return {

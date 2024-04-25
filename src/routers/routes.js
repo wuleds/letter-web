@@ -1,10 +1,8 @@
 import * as VueRouter from "vue-router"
 
 const routes = [
-    {path:'/',redirect:'/main'},
+    {path:'/',redirect:'/user'},
     {path:'/404',name:'找不到页面啦', component: () => import('@/page/responseState/404.vue')},
-    {path:'/wsTest',name:'wsTest', component: () => import('@/page/test/WSLink.vue')},
-    {path:'/voice',name:'voice', component: () => import('@/components/main/voice/Record.vue')},
     {
         path: '/main',
         name:'main',

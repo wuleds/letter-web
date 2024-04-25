@@ -16,7 +16,7 @@
 
         <div class="photo">
           <div class="photo-img">
-            <img src="https://avatars.githubusercontent.com/u/76564306?s=40&v=4" alt="">
+            <img :src="getPath(useMeStore().userInfo.userId + '.jpg')" alt="">
           </div>
           <div class="photo-text">
             <p>{{myId}}</p>
@@ -90,6 +90,7 @@ import {useMeStore} from "@/js/store/Me.js";
 import {useChatListStore} from "@/js/store/ChatListData.js";
 import {WebSocketClient} from "@/js/main/ws.js";
 import Group from "@/components/main/Group.vue";
+import {getPath} from "@/js/main/message/PathController.js";
 import("/src/js/icon/iconfont.js")
 //与服务器进行websocket连接
 const ws = WebSocketClient.getInstance();

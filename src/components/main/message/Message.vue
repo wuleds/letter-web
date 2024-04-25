@@ -2,26 +2,25 @@
 import {onMounted, ref} from "vue";
 import {useMeStore} from "@/js/store/Me.js";
 import {getPath} from "@/js/main/message/PathController.js";
+import {useCurrentChatStore} from "@/js/store/CurrentChat.js";
 
 const props = defineProps(["message"]);
 const message = ref(props.message);
 const isMe = ref(message.value.senderId === useMeStore().userInfo.userId);
-
+const photo = isMe.value ? useMeStore().userInfo.userPhoto : useCurrentChatStore().currentChat.photo;
 const exist = (item) => {
   return item !== undefined && item !== null && item !== '' && item.length > 0;
 };
-
-
-
 </script>
 
 <template>
   <div class="message" :class="{'selfMes':isMe,'otherMes':!isMe}">
     <div>
-      <img class="avatar" :src="getPath(message.senderId+ '.jpg')"  alt="photo"/>
+      <img class="avatar" :src="getPath(photo)"  alt="头像"/>
     </div>
-    {{message}}
+    <div v-if="message.replyStatus === '1'">
 
+    </div>
     <div>
 
       <!-- 图片消息 -->
@@ -46,6 +45,7 @@ const exist = (item) => {
 
       <!-- 文字  -->
       <p v-if="message.type === '2' && exist(message.text)">{{ message.text }}</p>
+      <p>{{message.createDate}}</p>
     </div>
 
   </div>

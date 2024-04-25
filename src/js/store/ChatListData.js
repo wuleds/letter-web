@@ -24,7 +24,9 @@ export const useChatListStore = defineStore('chatListData',()=>{
                         type: item.type,
                         chatId: item.chatId,
                         myId: item.myId,
-                        toId: item.toId
+                        toId: item.toId,
+                        name:item.name,
+                        photo:item.photo
                     });
                 })
                 await chatListDbOps.insertItems(JSON.parse(res.data.data));
