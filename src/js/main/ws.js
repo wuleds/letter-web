@@ -16,11 +16,10 @@ export class WebSocketClient {
     WS_URL = `${this.protocol}${this.currentUrl}/link`;
     pingInterval = null; // 心跳包定时器
     reconnectTimeout = null; // 重连定时器
-    linkState = true;
     unreadCountInterval = null;
     unreadMessageInterval = null;
     reconnectInterval = null;
-
+    //初始化
     constructor() {
         if (WebSocketClient.instance) {
             return WebSocketClient.instance;
@@ -28,7 +27,6 @@ export class WebSocketClient {
         this.init();
         WebSocketClient.instance = this;
     }
-
     init() {
         this.ws = new WebSocket(this.WS_URL);
         this.ws.onopen = this.onOpen.bind(this);
@@ -36,7 +34,6 @@ export class WebSocketClient {
         this.ws.onclose = this.onClose.bind(this);
         this.ws.onerror = this.onError.bind(this);
     }
-
     onOpen() {
         console.log('WebSocket 连接成功');
         const auth = {
@@ -61,7 +58,6 @@ export class WebSocketClient {
         this.startGetMessage();
         console.log('开始获取未读消息')
     }
-
     onMessage(serverMessage) {
         const message = JSON.parse(serverMessage.data);
         const type = message.type;
@@ -111,7 +107,6 @@ export class WebSocketClient {
             messageDBOps.deleteItem(chatId,messageId).then(() => {});
         }
     }
-
     onClose() {
         console.log('WebSocket 断开连接');
         this.stopHeartbeat();
@@ -119,12 +114,10 @@ export class WebSocketClient {
             this.reconnect();
        // }
     }
-
     onError(error) {
         console.error('WebSocket 连接错误:', error);
         this.ws.close();
     }
-
     reconnect() {
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
@@ -134,8 +127,7 @@ export class WebSocketClient {
             this.init();
         }, 5000); // 5秒后尝试重连
     }
-
-    /**启动心跳包机制，每10发送一次心跳包，表示前端在线*/
+    //启动心跳包机制，每10发送一次心跳包，表示前端在线
     startHeartbeat() {
         if (this.pingInterval) {
             clearInterval(this.pingInterval);
@@ -155,7 +147,6 @@ export class WebSocketClient {
             }
         }, 10000); // 每10秒发送一次ping
     }
-
     //开始重连机制，每2秒检查一次连接状态
     startReconnect(){
         if (this.reconnectInterval) {
@@ -168,14 +159,12 @@ export class WebSocketClient {
             }
         }, 5000); // 每5秒尝试重连
     }
-
     stopHeartbeat() {
         if (this.pingInterval) {
             clearInterval(this.pingInterval);
             this.pingInterval = null;
         }
     }
-
     //开始获取未读消息数
     startGetUnreadCount(){
         const chatArray = [];
@@ -211,7 +200,6 @@ export class WebSocketClient {
             }
         }, 1000); // 每10秒发送一次ping
     }
-
     //获取当前未读消息
     startGetMessage(){
         if(this.unreadMessageInterval){
@@ -232,8 +220,7 @@ export class WebSocketClient {
         },1000) //每1秒获取一次未读消息
 
     }
-
-
+    //发送消息
     sendMessage(message) {
         if (this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(message));
@@ -243,16 +230,18 @@ export class WebSocketClient {
         }
     }
 
-    disconnect() {
-        this.stopHeartbeat();
-      //  this.linkState = false;
-        this.ws.close();
-    }
-
     static getInstance() {
         if (!WebSocketClient.instance) {
             WebSocketClient.instance = new WebSocketClient();
         }
         return WebSocketClient.instance;
     }
+
+    disconnect() {
+        this.stopHeartbeat();
+      //  this.linkState = false;
+        this.ws.close();
+    }
+
+
 }

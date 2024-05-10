@@ -3,6 +3,8 @@ import * as VueRouter from "vue-router"
 const routes = [
     {path:'/',redirect:'/user'},
     {path:'/404',name:'找不到页面啦', component: () => import('@/page/responseState/404.vue')},
+    {path:'/me',name:'me',component: () => import('@/page/data/Me.vue')},
+    {path:'/story/:id}',name:'story',component:()=>import('@/page/data/Story.vue')},
     {
         path: '/main',
         name:'main',

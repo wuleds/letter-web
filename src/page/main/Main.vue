@@ -14,9 +14,9 @@
     <div class="warp">
       <div class="nav">
 
-        <div class="photo">
+        <div class="photo" @click="toMe()">
           <div class="photo-img">
-            <img :src="getPath(useMeStore().userInfo.userId + '.jpg')" alt="">
+            <img :src="getPath(useMeStore().userInfo.userPhoto)" alt="头像">
           </div>
           <div class="photo-text">
             <p>{{myId}}</p>
@@ -108,6 +108,9 @@ const showGroup = ()=>{
 }
 
 const myId = ref(useMeStore().userInfo.userName);
+const toMe = ()=>{
+  window.location.href = '/me';
+}
 </script>
 
 <style scoped>
