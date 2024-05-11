@@ -54,7 +54,7 @@
             <div class="text">频道</div>
           </div>
 
-          <div class="menu-item">
+          <div class="menu-item" @click="toStory('me')">
             <div class="menu-item-icon">
               <svg class="main-icon" aria-hidden="true">
                 <use xlink:href="#icon-plume"></use>
@@ -91,6 +91,7 @@ import {useChatListStore} from "@/js/store/ChatListData.js";
 import {WebSocketClient} from "@/js/main/ws.js";
 import Group from "@/components/main/Group.vue";
 import {getPath} from "@/js/main/message/PathController.js";
+import {toStory} from "@/js/Data/Story.js";
 import("/src/js/icon/iconfont.js")
 //与服务器进行websocket连接
 const ws = WebSocketClient.getInstance();

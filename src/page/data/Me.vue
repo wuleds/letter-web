@@ -29,7 +29,7 @@
     </a-form-item>
 
     <a-form-item label="头像">
-      <a-upload action="/api/file/image/upload" list-type="picture-card" :before-upload="getImageListDigest">
+      <a-upload action="/api/file/image/upload" max-count="1" list-type="picture-card" :before-upload="getImageListDigest">
         <div>
           <div style="margin-top: 8px">上传</div>
         </div>
