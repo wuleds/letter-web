@@ -37,6 +37,7 @@ const storyForm = reactive({
 const send = () => {
   createStory(storyForm);
   close();
+  window.location.reload();
 }
 
 const labelCol = {

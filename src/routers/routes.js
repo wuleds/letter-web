@@ -17,7 +17,7 @@ const routes = [
                 component:() => import('@/page/main/ChatWindow.vue'),
             },
             {
-                path:'/story/:id',
+                path:'/stores/:id',
                 name:'story',
                 component:()=>import('@/page/data/Stores.vue')
             }

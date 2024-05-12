@@ -3,6 +3,7 @@ import { ref} from "vue";
 import {deleteContact} from "@/js/main/contact/Contact.js";
 import {createConversation} from "@/js/main/chatList/ChatList.js";
 import {getPath} from "@/js/main/message/PathController.js";
+import {toStory} from "@/js/Data/Story.js";
 const props = defineProps(['contact']);
 const contact = ref(props.contact);
 const show =ref(true);
@@ -32,9 +33,9 @@ const close = () => {
 
     <div class="contact-list-card">
 
-      <div class="contact-list-card-photo">
+      <div class="contact-list-card-photo" @click="toStory(contact.contactId)">
         <a-avatar size="large">
-          <template #icon><img :src="getPath(contact.contactId + '.jpg')" alt="头像"></template>
+          <template #icon><img :src="getPath(contact.contactPhoto)" alt="头像"></template>
         </a-avatar>
       </div>
 
